@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assembly Preflight Checklist</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f3; color: #1a1a18; min-height: 100vh; padding: 1.5rem 1rem 3rem; }
+  .page { max-width: 760px; margin: 0 auto; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px; }
+  .logo-row { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 44px; height: 44px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-title { font-size: 20px; font-weight: 600; color: #1a1a18; }
+  .logo-sub { font-size: 13px; color: #6b6b68; margin-top: 1px; }
+  .print-btn { font-size: 13px; padding: 7px 16px; border-radius: 8px; border: 1px solid #ccc; background: #fff; color: #444; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  .print-btn:hover { background: #f0f0ee; }
+
+  .card { background: #fff; border: 1px solid #e5e5e2; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .section-label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 520px) { .form-grid, .form-grid.three { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field input, .field select, .field textarea {
+    font-size: 13px; padding: 6px 10px; border: 1px solid #ddd; border-radius: 7px;
+    background: #fff; color: #1a1a18; font-family: inherit;
+  }
+  .field input, .field select { height: 34px; }
+  .field textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #378ADD; box-shadow: 0 0 0 3px rgba(55,138,221,0.12); }
+
+  .product-select { width: 100%; font-size: 13px; padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #1a1a18; height: 38px; font-family: inherit; }
+  .product-select:focus { outline: none; border-color: #378ADD; box-shadow: 0 0 0 3px rgba(55,138,221,0.12); }
+
+  .divider { border: none; border-top: 1px solid #ebebea; margin: 1.25rem 0; }
+
+  .progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+  .progress-bar-wrap { flex: 1; height: 6px; background: #ebebea; border-radius: 99px; overflow: hidden; }
+  .progress-bar { height: 100%; background: #1D9E75; border-radius: 99px; transition: width 0.3s; }
+  .progress-pct { font-size: 12px; font-weight: 600; color: #888; min-width: 34px; text-align: right; }
+
+  .phase { border: 1px solid #e5e5e2; border-radius: 12px; overflow: hidden; margin-bottom: 1rem; }
+  .phase-head { display: flex; align-items: center; justify-content: space-between; padding: 9px 14px; background: #f8f8f6; }
+  .phase-name { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+  .phase-stat { font-size: 12px; color: #aaa; }
+
+  .station { border-top: 1px solid #ebebea; }
+  .station-head { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; cursor: pointer; transition: background 0.1s; }
+  .station-head:hover { background: #f8f8f6; }
+  .station-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #ccc; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .station.done .station-check { background: #1D9E75; border-color: #1D9E75; }
+  .station.done .station-check::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+  .station-info { flex: 1; min-width: 0; }
+  .station-title { font-size: 14px; font-weight: 500; color: #1a1a18; margin-bottom: 3px; }
+  .station.done .station-title { color: #aaa; text-decoration: line-through; }
+  .station-meta { font-size: 12px; color: #888; line-height: 1.4; }
+  .initials-box { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-top: 2px; }
+  .initials-box label { font-size: 11px; color: #888; white-space: nowrap; }
+  .initials-input { width: 54px; font-size: 12px; padding: 3px 7px; border: 1px solid #ddd; border-radius: 7px; background: #fff; color: #1a1a18; text-align: center; height: 28px; text-transform: uppercase; font-family: inherit; }
+
+  .detail-section { padding: 0 14px 12px 46px; display: none; }
+  .detail-section.open { display: block; }
+  .detail-cols { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; }
+  @media (max-width: 480px) { .detail-cols { grid-template-columns: 1fr; } }
+  .detail-col h4 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin: 0 0 6px; }
+  .detail-list { list-style: none; }
+  .detail-list li { font-size: 12px; color: #1a1a18; padding: 4px 0; border-bottom: 1px solid #f0f0ee; display: flex; gap: 6px; align-items: flex-start; line-height: 1.45; }
+  .detail-list li:last-child { border-bottom: none; }
+  .part-num { font-size: 11px; color: #888; font-family: monospace; white-space: nowrap; }
+  .location-tag { font-size: 10px; background: #E6F1FB; color: #185FA5; padding: 1px 6px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+  .torque-tag { font-size: 11px; background: #FAEEDA; color: #854F0B; padding: 2px 8px; border-radius: 7px; display: inline-block; margin-top: 4px; }
+  .toggle-btn { font-size: 11px; color: #888; cursor: pointer; padding: 3px 0; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 6px; background: none; border: none; font-family: inherit; }
+  .toggle-btn:hover { color: #378ADD; }
+
+  .qc-block { border: 1px solid #e5e5e2; border-radius: 12px; overflow: hidden; margin-bottom: 1rem; }
+  .qc-block-head { display: flex; align-items: center; gap: 8px; padding: 9px 14px; background: #f8f8f6; }
+  .qc-block-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #666; }
+  .qc-block-badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; margin-left: auto; font-weight: 500; }
+  .badge-pass { background: #E1F5EE; color: #085041; }
+  .badge-fail { background: #FCEBEB; color: #791F1F; }
+  .badge-pending { background: #f1f0ec; color: #666; }
+  .qc-body { padding: 12px 14px; }
+  .qc-checks { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .qc-check-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border: 1px solid #e5e5e2; border-radius: 8px; cursor: pointer; transition: background 0.1s; }
+  .qc-check-row:hover { background: #f8f8f6; }
+  .qc-check-row.checked { background: #E1F5EE; border-color: #5DCAA5; }
+  .qc-check-row.failed { background: #FCEBEB; border-color: #F09595; }
+  .qc-check-box { width: 18px; height: 18px; border-radius: 4px; border: 2px solid #ccc; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+  .qc-check-row.checked .qc-check-box { background: #1D9E75; border-color: #1D9E75; }
+  .qc-check-row.checked .qc-check-box::after { content: ''; display: block; width: 4px; height: 8px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+  .qc-check-row.failed .qc-check-box { background: #E24B4A; border-color: #E24B4A; }
+  .qc-check-row.failed .qc-check-box::after { content: '✕'; font-size: 11px; font-weight: 700; }
+  .qc-check-label { font-size: 13px; color: #1a1a18; flex: 1; }
+  .qc-check-row.checked .qc-check-label { color: #085041; }
+  .qc-check-row.failed .qc-check-label { color: #791F1F; }
+  .qc-fail-btn { font-size: 11px; padding: 2px 9px; border: 1px solid #ddd; border-radius: 20px; background: transparent; color: #888; cursor: pointer; flex-shrink: 0; font-family: inherit; }
+  .qc-fail-btn:hover { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+  .qc-signoff-row { display: grid; grid-template-columns: 1fr 1fr 110px; gap: 8px; align-items: end; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ebebea; }
+  @media (max-width: 500px) { .qc-signoff-row { grid-template-columns: 1fr; } }
+  .qc-verdict { display: flex; gap: 6px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .verdict-label { font-size: 12px; color: #888; margin-right: 4px; }
+  .verdict-btn { font-size: 12px; padding: 5px 14px; border-radius: 8px; border: 1px solid #ddd; background: transparent; color: #888; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 5px; }
+  .verdict-btn:hover { background: #f0f0ee; }
+  .verdict-btn.active-pass { background: #E1F5EE; color: #085041; border-color: #5DCAA5; font-weight: 600; }
+  .verdict-btn.active-fail { background: #FCEBEB; color: #791F1F; border-color: #F09595; font-weight: 600; }
+  .verdict-btn.active-hold { background: #FAEEDA; color: #633806; border-color: #EF9F27; font-weight: 600; }
+
+  .complete-banner { padding: 12px 16px; background: #E1F5EE; border-radius: 10px; border: 1px solid #5DCAA5; margin-top: 1rem; font-size: 13px; color: #085041; display: none; align-items: center; gap: 8px; font-weight: 500; }
+  .complete-banner.show { display: flex; }
+
+  .actions { display: flex; gap: 8px; margin-top: 1.25rem; flex-wrap: wrap; }
+  .btn { font-size: 13px; padding: 8px 18px; border-radius: 8px; border: 1px solid #ddd; background: #fff; color: #444; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-weight: 500; }
+  .btn:hover { background: #f0f0ee; }
+  .btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .btn.primary:hover { background: #0F6E56; }
+  .btn.danger { background: #fff; color: #A32D2D; border-color: #ddd; }
+  .btn.danger:hover { background: #FCEBEB; border-color: #F09595; }
+
+  #no-product { text-align: center; padding: 3rem 1rem; color: #aaa; font-size: 14px; }
+  #no-product i { font-size: 40px; display: block; margin-bottom: 10px; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .print-btn, .actions, .toggle-btn, .qc-fail-btn { display: none !important; }
+    .detail-section { display: block !important; }
+    .card, .phase, .qc-block { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="top-bar">
+    <div class="logo-row">
+      <div class="logo-icon"><i class="ti ti-clipboard-check" style="font-size:22px;color:#185FA5;"></i></div>
+      <div>
+        <div class="logo-title">Assembly preflight checklist</div>
+        <div class="logo-sub" id="sub-model">Select a product to begin</div>
+      </div>
+    </div>
+    <button class="print-btn" onclick="window.print()"><i class="ti ti-printer"></i> Print / Save PDF</button>
+  </div>
+
+  <div class="card">
+    <p class="section-label">Product / model</p>
+    <select class="product-select" id="product-select" onchange="loadProduct()">
+      <option value="">— Select product —</option>
+      <optgroup label="IC Intercom — Indoor (Surface Mount)">
+        <option value="smt-single">Surface Mount Single Button Indoor Intercom (WL-IC-SMT-CAR/INF/SIP-I-W-R)</option>
+        <option value="smt-dual">Surface Mount Dual Button Indoor Intercom</option>
+        <option value="smt-panic">Surface Mount Panic Button Module</option>
+        <option value="smt-signal">SIP Alerter Indoor Intercom</option>
+      </optgroup>
+      <optgroup label="IC Intercom — Indoor (Back Mount)">
+        <option value="bm-single">Back Mount Single Button Intercom</option>
+        <option value="bm-dual">Back Mount Dual Button Intercom</option>
+        <option value="bm-none">Back Mount No Button Intercom</option>
+      </optgroup>
+      <optgroup label="IC Intercom — Indoor (Flush Mount)">
+        <option value="fm-single">Flush Mount Single Button Intercom</option>
+        <option value="fm-dual">Flush Mount Dual Button Intercom</option>
+        <option value="fm-none">Flush Mount No Button Intercom</option>
+      </optgroup>
+      <optgroup label="IC Intercom — Outdoor (2-Gang)">
+        <option value="2g-single">2-Gang Single Button Outdoor Intercom</option>
+        <option value="2g-dual">2-Gang 2-Button Outdoor Intercom</option>
+        <option value="2g-none">2-Gang No Button Outdoor Intercom</option>
+      </optgroup>
+      <optgroup label="Speakers — Ceiling / Surface Mount">
+        <option value="spkr-22a">WL-SPKR-22-A (2×2 Ceiling Speaker)</option>
+        <option value="spkr-22car">WL-SPKR-22-CAR/INF/SIP</option>
+        <option value="spkr-22-2r">WL-SPKR-22-2R</option>
+        <option value="spkr-smt-a">WL-SPKR-SMT-A (Surface Mount)</option>
+        <option value="spkr-smt-car">WL-SPKR-SMT-CAR/INF/SIP</option>
+      </optgroup>
+      <optgroup label="Speakers — Open Face">
+        <option value="spkr-of-a">WL-SPKR-OF-A</option>
+        <option value="spkr-of-car">WL-SPKR-OF-CAR/INF (Grey / OG White)</option>
+      </optgroup>
+      <optgroup label="Speakers — In-Ceiling (510/520/540)">
+        <option value="spkr-510">WL-SPKR-510-CAR/INF-F</option>
+        <option value="spkr-510d">WL-SPKR-510D-CAR/INF-F</option>
+        <option value="spkr-520">WL-SPKR-520-CAR/INF-F</option>
+        <option value="spkr-540">WL-SPKR-540-CAR/INF-F</option>
+      </optgroup>
+      <optgroup label="Zone Controllers">
+        <option value="zc-1ch-r">Zone Controller 1-Channel with Relay (WL-ZN-CTR-1CH-R)</option>
+        <option value="zc-1ch-car">Zone Controller 1-Channel Carina with Relay</option>
+        <option value="zc-1ch-inf">Zone Controller 1-Channel InformaCast with Relay</option>
+        <option value="zc-2ch">Zone Controller 2-Channel</option>
+        <option value="zc-2ch-inf">Zone Controller 2-Channel InformaCast</option>
+      </optgroup>
+      <optgroup label="Carina Controllers">
+        <option value="carina-pbx">Carina PBX (WL-PBX-CAR)</option>
+        <option value="carina-pbx-lite">Carina PBX Lite</option>
+        <option value="carina-em">Carina Event Manager</option>
+        <option value="carina-em-lite">Carina Event Manager Lite</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div class="card">
+    <p class="section-label">Production info</p>
+    <div class="form-grid">
+      <div class="field"><label>Start by</label><input type="text" id="f-startby" placeholder="Operator name"></div>
+      <div class="field"><label>Date</label><input type="date" id="f-date"></div>
+      <div class="field"><label>Time</label><input type="time" id="f-time"></div>
+      <div class="field"><label>Assembly start date</label><input type="date" id="f-asmdate"></div>
+    </div>
+    <div class="form-grid three">
+      <div class="field"><label>Assembly team / line</label>
+        <select id="f-team">
+          <option>T1</option><option>T2</option><option>T3</option>
+          <option>Line 1</option><option>Line 2</option><option>Line 3</option>
+        </select>
+      </div>
+      <div class="field"><label>Completed by</label><input type="text" id="f-compby" placeholder="Operator name"></div>
+      <div class="field"><label>Completion date</label><input type="date" id="f-compdate"></div>
+    </div>
+  </div>
+
+  <div id="checklist-area" style="display:none;">
+
+    <div class="card">
+      <p class="section-label">Assembly stations</p>
+      <div class="progress-row">
+        <span style="font-size:12px;color:#888;">Stations complete</span>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="pbar"></div></div>
+        <span class="progress-pct" id="ppct">0%</span>
+      </div>
+      <div id="phases"></div>
+    </div>
+
+    <div class="card">
+      <p class="section-label">Quality control sign-off</p>
+      <div id="qc-area"></div>
+    </div>
+
+    <div class="card">
+      <p class="section-label">Final disposition</p>
+      <div id="final-area"></div>
+    </div>
+
+    <div class="complete-banner" id="complete-banner">
+      <i class="ti ti-circle-check" style="font-size:20px;"></i>
+      All stations complete and QC signed off — ready for shipment.
+    </div>
+
+    <div class="actions">
+      <button class="btn danger" onclick="resetAll()"><i class="ti ti-refresh"></i> Reset all</button>
+      <button class="btn primary" onclick="markAllDone()"><i class="ti ti-check"></i> Mark stations complete</button>
+      <button class="btn" onclick="window.print()"><i class="ti ti-printer"></i> Print / Save PDF</button>
+    </div>
+
+  </div>
+
+  <div id="no-product">
+    <i class="ti ti-clipboard-list"></i>
+    Select a product above to load its checklist
+  </div>
+
+</div>
+
+<script>
+const PRODUCTS = {
+  "smt-single": {
+    name: "Surface Mount Single Button Indoor Intercom",
+    model: "WL-IC-SMT-CAR/INF/SIP-I-W-R",
+    stations: [
+      { id:"s1", title:"Station 1 — PCB assembly (solder)", torque:"1-2 on HTD",
+        materials:[{n:"MIC",p:"3501-1-1"},{n:"LED",p:"1105-4-1"},{n:"PC Board",p:"4601-61-3"},{n:"5-pin connector",p:"3101-28-1"},{n:"Mic/LED Gasket",p:"4001-7-1"}],
+        tools:["Solder iron","Flux","Flux remover","Gloves & N95 mask","Break off 2 & 3-pin terminal block from 10-pin (3102-88-1)"] },
+      { id:"s2", title:"Station 2 — Faceplate assembly", torque:"2-3 on HTD",
+        materials:[{n:"Single button faceplate",p:"4701-81-1"},{n:"Mic/LED Gasket",p:"4001-7-1"},{n:"O-ring",p:"3609-2-1"},{n:"Push button",p:"3303-2-1"},{n:"Speaker Gasket",p:"4001-15-1"},{n:"Speaker",p:"3502-7-1"},{n:"Skinner",p:"6005-13-1"}],
+        tools:["Wooden jig","Tweezers","Magnetizer","Screw Presenter","T-15 Bit","Heavy Torque Driver"] },
+      { id:"s3", title:"Station 3 — Chassis assembly", torque:"",
+        materials:[{n:"Speaker cable",p:"4801-8-1"},{n:"9/16\" spacers",p:"3611-12-1"},{n:"1/4\" Hex standoff",p:"3611-10-1"},{n:"Hex locknut",p:"3612-5-1"},{n:"POE Module",p:"6011-3-8"},{n:"1/4\" spacer",p:"3611-13-1"},{n:"1/2\" Socket head cap",p:"3603-16-1"},{n:"1/4\" Socket head cap",p:"3603-17-1"}],
+        tools:["Headset","Masking Tape","Tweezers/Jumpers","Tabletop Foam"] },
+      { id:"s4", title:"Station 4 — Test & label", torque:"",
+        materials:[{n:"Nylon Cable tie",p:"3607-1-1"},{n:"DSP Label",p:"4502-5-1"},{n:"Test"}],
+        tools:[] },
+      { id:"s5", title:"Station 5 — Packaging", torque:"",
+        materials:[{n:"Back box",p:"4301-58-4"},{n:"Spring Nut",p:"3612-9-1"},{n:"8-32x3/8\" Flat Socket cap screw",p:"3603-26-1"},{n:"Shipping Box",p:"4301-15-1"}],
+        tools:[] }
+    ]
+  },
+  "spkr-22a": {
+    name: "2x2 Ceiling Speaker",
+    model: "WL-SPKR-22-A",
+    stations: [
+      { id:"s1", title:"Station 1 — Housing & board assembly", torque:"1-2 on HTD (Screw 3605-5-1)",
+        materials:[{n:"Diecast Housing",p:"4701-181-2",loc:"LANE 3 & 4"},{n:"6-32x1/2 T-15 Drive Screw",p:"3605-5-1",loc:"SHELF 2-C"},{n:"Rusty Board",p:"6005-15-4",loc:"LANE 4"},{n:"Foam Square",p:"3922-1-1",loc:"SHELF 9-E"},{n:"Aluminum Spacer",p:"3611-16-1",loc:"SHELF 3-A"}],
+        tools:["Tweezers","Jigs","Screw Presenter","Magnetizer","Medium/Long T-15 Bit","Blue Switch Heavy Torque Driver","Bin labeled with correct part number"] },
+      { id:"s2", title:"Station 2 — Speaker installation", torque:"2-3 on HTD (Screw 3605-5-1)",
+        materials:[{n:"6-32x1/2 T-15 Drive Screw",p:"3605-5-1",loc:"SHELF 2-C"},{n:"Speaker",p:"3502-11-1",loc:"LANE 4"}],
+        tools:["Speaker Guard","Tweezers","Magnetizer","Screw Presenter","T-15 Bit","Heavy Torque Driver","Bin labeled with correct part number"] },
+      { id:"s3", title:"Station 3 — Testing & labeling", torque:"",
+        materials:[{n:"Testing"}],
+        tools:["Headset","Masking Tape","Tweezers/Jumpers","Tabletop Foam","Plastic Thermal Print roll (Label)","Ribbon Roll (Film)"] },
+      { id:"s4", title:"Station 4 — Packaging", torque:"",
+        materials:[{n:"2x2 Ceiling Grill",p:"4703-1-2",loc:"LANE 3"},{n:"Rivets",p:"3608-1-1",loc:"SHELF 3-E"},{n:"Shipping Box",p:"4301-38-1",loc:"LANE 1"},{n:"Box Foam",p:"4301-28-2",loc:"BAY 2A/2C"}],
+        tools:["Rivet Gun","Scissors/Box cutter","Masking Tape","42x45 Pallet","Pallet Date Code Sheet","Bin labeled with correct part number"] }
+    ]
+  },
+  "zc-1ch-r": {
+    name: "Zone Controller 1-Channel with Relay",
+    model: "WL-ZN-CTR-1CH-R",
+    stations: [
+      { id:"s1", title:"Station 1 — Parts & board assembly", torque:"2-3 on HTD (Screw 3605-8-1)",
+        materials:[{n:"Screw, Thread Forming 6-32-3/3 T-15",p:"3605-8-1",loc:"SHELF 2-A"},{n:"Faceplate",p:"4701-109-3",loc:"SHELF 5-E"},{n:"Foam Tape 0.25\"",p:"3922-1-1",loc:"SHELF 9-E"},{n:"CCA, Tested & Programmed, Carina",p:"6005-4-5",loc:"LANE 4"},{n:"CCA, PM Module Bailey",p:"6005-12-2",loc:"LANE 4"},{n:"1-U Extrusion 4.95-4.97 in",p:"4701-81-1",loc:"LANE 2"},{n:"Faceplate, 1-U Steve/Bailey",p:"4701-135-1",loc:"SHELF 5-D"}],
+        tools:["Tabletop Foam","Medium/Long 3.5 or 6\" T-15 Bit","Blue Switch Heavy Torque Driver","Bin labeled with correct part number"] },
+      { id:"s2", title:"Station 2 — Testing", torque:"",
+        materials:[{n:"Label 3x1\" Thermal",p:"4502-6-1",loc:"SHELF 11-E"},{n:"Label 4x2\" Thermal",p:"4502-3-001",loc:"SHELF 11-E"}],
+        tools:["Headset","Aux/RCA Cable","Aux 2-Pin Audio Cable","PoE Cable","Speaker"] },
+      { id:"s3", title:"Station 3 — Part kit & packaging", torque:"",
+        materials:[{n:"Plastic bag 2x3\" resealable",p:"4303-1-1",loc:"SHELF 4-B"},{n:"2-pin screw terminal 3.5mm",p:"3102-29-1",loc:"SHELF 1-F"},{n:"6-pin screw terminal 3.5mm",p:"3102-28-1",loc:"SHELF 1-F"},{n:"8-pin screw terminal w/ retention",p:"3102-40-1",loc:"SHELF 1-E"},{n:"Ferrite cable clamp",p:"2331-1-1",loc:"SHELF 1-G"},{n:"Mailer box 6x4.75x2",p:"4301-3-1",loc:"LANE 1"},{n:"Bubble wrap"}],
+        tools:[] }
+    ]
+  },
+  "carina-pbx": {
+    name: "Carina PBX",
+    model: "WL-PBX-CAR",
+    stations: [
+      { id:"s1", title:"Station 1 — Board & chassis assembly", torque:"2-3 on HTD (Screw 3605-8-1)",
+        materials:[{n:"Screw, Thread Forming 6-32-3/3 T-15",p:"3605-8-1",loc:"SHELF 2-A"},{n:"Faceplate",p:"4701-92-2",loc:"SHELF 5-E"},{n:"Square Foam Tape 0.25\"",p:"3922-1-1",loc:"SHELF 9-E"},{n:"CCA, Tested & Programmed, Voyd",p:"6005-19-3",loc:"LANE 4"},{n:"CCA, PM Module Simper",p:"6005-27-1",loc:"LANE 4"},{n:"1-U Extrusion 4.95-4.97 in",p:"4701-84-1",loc:"LANE 2"},{n:"Faceplate, 1-U Steve/Bailey",p:"4701-182-1",loc:"SHELF 5-C"}],
+        tools:["Tabletop Foam","Medium/Long 3.5 or 6\" T-15 Bit","Blue Switch Heavy Torque Driver","Bin labeled with correct part number","Tweezers"] },
+      { id:"s2", title:"Station 2 — Testing", torque:"",
+        materials:[{n:"Label 3x1\" Thermal",p:"4502-6-1",loc:"SHELF 11-E"},{n:"Label 4x2\" Thermal",p:"4502-3-001",loc:"SHELF 11-E"}],
+        tools:["PoE Cable"] },
+      { id:"s3", title:"Station 3 — Part kit & packaging", torque:"",
+        materials:[{n:"Plastic bag 2x3\" resealable",p:"4303-1-1",loc:"SHELF 4-B"},{n:"2-pin screw terminal 3.5mm",p:"3102-29-1",loc:"SHELF 1-F"},{n:"6-pin screw terminal 3.5mm",p:"3102-28-1",loc:"SHELF 1-F"},{n:"Mailer box 6x4.75x2",p:"4301-3-1",loc:"LANE 1"}],
+        tools:[] }
+    ]
+  }
+};
+
+const ALIASES = {
+  "smt-dual":"smt-single","smt-signal":"smt-single","smt-panic":"smt-single",
+  "bm-single":"smt-single","bm-dual":"smt-single","bm-none":"smt-single",
+  "fm-single":"smt-single","fm-dual":"smt-single","fm-none":"smt-single",
+  "2g-single":"smt-single","2g-dual":"smt-single","2g-none":"smt-single",
+  "spkr-22car":"spkr-22a","spkr-22-2r":"spkr-22a","spkr-smt-a":"spkr-22a",
+  "spkr-smt-car":"spkr-22a","spkr-of-a":"spkr-22a","spkr-of-car":"spkr-22a",
+  "spkr-510":"spkr-22a","spkr-510d":"spkr-22a","spkr-520":"spkr-22a","spkr-540":"spkr-22a",
+  "zc-1ch-car":"zc-1ch-r","zc-1ch-inf":"zc-1ch-r","zc-2ch":"zc-1ch-r","zc-2ch-inf":"zc-1ch-r",
+  "carina-pbx-lite":"carina-pbx","carina-em":"carina-pbx","carina-em-lite":"carina-pbx"
+};
+
+const QC_SECTIONS = [
+  { id:"qc-visual", title:"Visual inspection", checks:[
+    "No scratches, dents, or cosmetic defects on housing/faceplate",
+    "All labels applied correctly — position, orientation, legibility",
+    "No excess flux residue on PCB",
+    "Gaskets seated properly with no gaps or tears",
+    "Cable routing clean and secured with cable tie",
+    "All fasteners present and flush — no cross-threading"
+  ]},
+  { id:"qc-mech", title:"Mechanical / torque verification", checks:[
+    "All screws torqued to spec per torque driver setting",
+    "Buttons actuate smoothly — no binding or excessive travel",
+    "Speaker grille secured — no rattle when tapped",
+    "Back box or enclosure closes flush — no gaps",
+    "POE module properly seated and locked"
+  ]},
+  { id:"qc-func", title:"Functional test", checks:[
+    "Unit powers on via PoE without fault LED",
+    "Audio output confirmed — speaker produces clear tone",
+    "Microphone input active — loopback or call test passed",
+    "Button(s) register correctly — no false triggers or sticking",
+    "DSP/firmware label matches programmed version",
+    "Network registration confirmed (SIP/Carina/InformaCast as applicable)"
+  ]},
+  { id:"qc-pkg", title:"Packaging & documentation", checks:[
+    "Correct part kit included (terminal blocks, ferrites, hardware bag)",
+    "Shipping label matches work order — model, serial, quantity",
+    "Box sealed and undamaged",
+    "Pallet date code sheet attached (if palletized)"
+  ]}
+];
+
+let stChecked={}, stOpenDetails={}, qcChecked={}, qcFailed={}, qcSignoffs={}, verdicts={}, currentProduct=null;
+
+function loadProduct() {
+  const sel = document.getElementById('product-select').value;
+  document.getElementById('no-product').style.display = sel ? 'none' : 'block';
+  if (!sel) { document.getElementById('checklist-area').style.display='none'; return; }
+  const key = ALIASES[sel] || sel;
+  currentProduct = PRODUCTS[key];
+  const selOpt = document.getElementById('product-select').selectedOptions[0];
+  document.getElementById('sub-model').textContent = selOpt.text;
+  stChecked={}; stOpenDetails={}; qcChecked={}; qcFailed={}; qcSignoffs={}; verdicts={};
+  currentProduct.stations.forEach(s => { stChecked[s.id]=false; stOpenDetails[s.id]=false; });
+  QC_SECTIONS.forEach(sec => {
+    sec.checks.forEach((_,i) => { qcChecked[sec.id+'-'+i]=false; qcFailed[sec.id+'-'+i]=false; });
+    qcSignoffs[sec.id]={name:'',date:'',time:''};
+    verdicts[sec.id]='';
+  });
+  document.getElementById('checklist-area').style.display='block';
+  const today = new Date().toISOString().split('T')[0];
+  const now = new Date().toTimeString().slice(0,5);
+  document.getElementById('f-date').value=today;
+  document.getElementById('f-time').value=now;
+  document.getElementById('f-asmdate').value=today;
+  render();
+}
+
+function toggleStation(id) { stChecked[id]=!stChecked[id]; render(); }
+function toggleDetail(id) { stOpenDetails[id]=!stOpenDetails[id]; render(); }
+
+function toggleQcCheck(key) {
+  if (qcFailed[key]) { qcFailed[key]=false; qcChecked[key]=false; }
+  else if (qcChecked[key]) { qcChecked[key]=false; }
+  else { qcChecked[key]=true; }
+  render();
+}
+
+function failQcCheck(key, e) {
+  e.stopPropagation();
+  qcFailed[key]=!qcFailed[key];
+  if (qcFailed[key]) qcChecked[key]=false;
+  render();
+}
+
+function setVerdict(secId, v) { verdicts[secId]=verdicts[secId]===v?'':v; render(); }
+
+function render() {
+  if (!currentProduct) return;
+  const stations=currentProduct.stations;
+  const done=stations.filter(s=>stChecked[s.id]).length;
+  const pct=Math.round(done/stations.length*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('ppct').textContent=pct+'%';
+
+  document.getElementById('phases').innerHTML=`
+    <div class="phase">
+      <div class="phase-head">
+        <span class="phase-name">Operator checksheet</span>
+        <span class="phase-stat">${done} / ${stations.length} complete</span>
+      </div>
+      ${stations.map(renderStation).join('')}
+    </div>`;
+
+  document.getElementById('qc-area').innerHTML=QC_SECTIONS.map(renderQcSection).join('');
+  renderFinal();
+  updateBanner();
+
+  stations.forEach(s => {
+    const el=document.getElementById('init-'+s.id);
+    if (el) el.addEventListener('click', e=>e.stopPropagation());
+  });
+  QC_SECTIONS.forEach(sec => {
+    ['name','date','time'].forEach(f => {
+      const el=document.getElementById('qcs-'+sec.id+'-'+f);
+      if (el) {
+        el.value=qcSignoffs[sec.id][f]||'';
+        el.addEventListener('input', e=>{qcSignoffs[sec.id][f]=e.target.value;});
+        el.addEventListener('click', e=>e.stopPropagation());
+      }
+    });
+  });
+}
+
+function renderStation(s) {
+  const isDone=stChecked[s.id], isOpen=stOpenDetails[s.id];
+  const mats=s.materials||[], tools=s.tools||[];
+  const matsHtml=mats.map(m=>`<li><span style="flex:1">${m.n}${m.p?` <span class="part-num">${m.p}</span>`:''}</span>${m.loc?`<span class="location-tag">${m.loc}</span>`:''}</li>`).join('');
+  const toolsHtml=tools.map(t=>`<li><span>${t}</span></li>`).join('');
+  return `<div class="station ${isDone?'done':''}" id="st-${s.id}">
+    <div class="station-head" onclick="toggleStation('${s.id}')">
+      <div class="station-check"></div>
+      <div class="station-info">
+        <div class="station-title">${s.title}</div>
+        <div class="station-meta">${mats.length} material${mats.length!==1?'s':''}${tools.length?' · '+tools.length+' tool'+(tools.length!==1?'s':''):''}${s.torque?` · <span style="color:#854F0B">Torque: ${s.torque}</span>`:''}</div>
+      </div>
+      <div class="initials-box" onclick="event.stopPropagation()">
+        <label for="init-${s.id}">Initials</label>
+        <input class="initials-input" id="init-${s.id}" maxlength="4" placeholder="___">
+      </div>
+    </div>
+    <div class="detail-section ${isOpen?'open':''}" id="det-${s.id}">
+      <button class="toggle-btn" onclick="toggleDetail('${s.id}')">
+        <i class="ti ti-chevron-${isOpen?'up':'down'}"></i>${isOpen?'Hide':'Show'} materials & tools
+      </button>
+      <div class="detail-cols">
+        <div class="detail-col"><h4><i class="ti ti-package"></i> Materials</h4><ul class="detail-list">${matsHtml}</ul>${s.torque?`<div class="torque-tag"><i class="ti ti-rotate-clockwise"></i> Torque: ${s.torque}</div>`:''}</div>
+        <div class="detail-col"><h4><i class="ti ti-tools"></i> Tools required</h4><ul class="detail-list">${toolsHtml||'<li><span style="color:#aaa">None listed</span></li>'}</ul></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderQcSection(sec) {
+  const doneC=sec.checks.filter((_,i)=>qcChecked[sec.id+'-'+i]).length;
+  const failC=sec.checks.filter((_,i)=>qcFailed[sec.id+'-'+i]).length;
+  const v=verdicts[sec.id];
+  let badge='';
+  if (v==='pass') badge='<span class="qc-block-badge badge-pass"><i class="ti ti-check" style="font-size:11px"></i> Pass</span>';
+  else if (v==='fail') badge='<span class="qc-block-badge badge-fail"><i class="ti ti-x" style="font-size:11px"></i> Fail</span>';
+  else badge=`<span class="qc-block-badge badge-pending">${doneC}/${sec.checks.length} checked${failC?' · '+failC+' flagged':''}</span>`;
+
+  const checksHtml=sec.checks.map((c,i)=>{
+    const key=sec.id+'-'+i, isC=qcChecked[key], isF=qcFailed[key];
+    return `<div class="qc-check-row ${isC?'checked':''} ${isF?'failed':''}" onclick="toggleQcCheck('${key}')">
+      <div class="qc-check-box"></div>
+      <span class="qc-check-label">${c}</span>
+      <button class="qc-fail-btn" onclick="failQcCheck('${key}',event)">${isF?'Unflag':'Flag fail'}</button>
+    </div>`;
+  }).join('');
+
+  return `<div class="qc-block">
+    <div class="qc-block-head">
+      <i class="ti ti-shield-check" style="font-size:15px;color:#888;"></i>
+      <span class="qc-block-title">${sec.title}</span>
+      ${badge}
+    </div>
+    <div class="qc-body">
+      <div class="qc-checks">${checksHtml}</div>
+      <div class="qc-signoff-row">
+        <div class="field"><label>QC inspector name</label><input type="text" id="qcs-${sec.id}-name" placeholder="Inspector name"></div>
+        <div class="field"><label>Sign-off date</label><input type="date" id="qcs-${sec.id}-date"></div>
+        <div class="field"><label>Time</label><input type="time" id="qcs-${sec.id}-time"></div>
+      </div>
+      <div class="qc-verdict">
+        <span class="verdict-label">Section verdict:</span>
+        <button class="verdict-btn ${v==='pass'?'active-pass':''}" onclick="setVerdict('${sec.id}','pass')"><i class="ti ti-check" style="font-size:13px"></i> Pass</button>
+        <button class="verdict-btn ${v==='fail'?'active-fail':''}" onclick="setVerdict('${sec.id}','fail')"><i class="ti ti-x" style="font-size:13px"></i> Fail</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderFinal() {
+  const v=verdicts['final']||'';
+  document.getElementById('final-area').innerHTML=`
+    <div class="qc-block">
+      <div class="qc-block-head">
+        <i class="ti ti-writing-sign" style="font-size:15px;color:#888;"></i>
+        <span class="qc-block-title">Final QC authorization</span>
+      </div>
+      <div class="qc-body">
+        <div class="form-grid three" style="margin-bottom:10px;">
+          <div class="field"><label>QC supervisor name</label><input type="text" id="final-name" placeholder="Supervisor name"></div>
+          <div class="field"><label>Authorization date</label><input type="date" id="final-date"></div>
+          <div class="field"><label>Time</label><input type="time" id="final-time"></div>
+        </div>
+        <div class="field" style="margin-bottom:10px;">
+          <label>Corrective actions / notes</label>
+          <textarea id="final-notes" placeholder="Describe any failures, rework performed, or deviations from standard procedure..."></textarea>
+        </div>
+        <div class="form-grid" style="margin-bottom:10px;">
+          <div class="field"><label>Work order / batch number</label><input type="text" id="final-wo" placeholder="WO-XXXXXX"></div>
+          <div class="field"><label>Unit serial / lot number</label><input type="text" id="final-serial" placeholder="SN or LOT"></div>
+        </div>
+        <div class="qc-verdict">
+          <span class="verdict-label">Final disposition:</span>
+          <button class="verdict-btn ${v==='release'?'active-pass':''}" onclick="setVerdict('final','release')"><i class="ti ti-check" style="font-size:13px"></i> Release to ship</button>
+          <button class="verdict-btn ${v==='hold'?'active-hold':''}" onclick="setVerdict('final','hold')"><i class="ti ti-alert-triangle" style="font-size:13px"></i> Hold — rework</button>
+          <button class="verdict-btn ${v==='reject'?'active-fail':''}" onclick="setVerdict('final','reject')"><i class="ti ti-x" style="font-size:13px"></i> Reject / scrap</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function updateBanner() {
+  const stations=currentProduct?currentProduct.stations:[];
+  const allSt=stations.every(s=>stChecked[s.id]);
+  const allQc=QC_SECTIONS.every(sec=>verdicts[sec.id]==='pass');
+  const released=verdicts['final']==='release';
+  const banner=document.getElementById('complete-banner');
+  if (allSt&&allQc&&released) banner.classList.add('show'); else banner.classList.remove('show');
+}
+
+function resetAll() {
+  if (!currentProduct) return;
+  currentProduct.stations.forEach(s=>{stChecked[s.id]=false;stOpenDetails[s.id]=false;});
+  QC_SECTIONS.forEach(sec=>{
+    sec.checks.forEach((_,i)=>{qcChecked[sec.id+'-'+i]=false;qcFailed[sec.id+'-'+i]=false;});
+    qcSignoffs[sec.id]={name:'',date:'',time:''};
+    verdicts[sec.id]='';
+  });
+  verdicts['final']='';
+  render();
+  document.querySelectorAll('.initials-input').forEach(el=>el.value='');
+}
+
+function markAllDone() {
+  if (!currentProduct) return;
+  currentProduct.stations.forEach(s=>{stChecked[s.id]=true;});
+  render();
+}
+
+document.getElementById('no-product').style.display='block';
+const today=new Date().toISOString().split('T')[0];
+const now=new Date().toTimeString().slice(0,5);
+document.getElementById('f-date').value=today;
+document.getElementById('f-time').value=now;
+document.getElementById('f-asmdate').value=today;
+</script>
+</body>
+</html>
