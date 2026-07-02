@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assembly Preflight Checklist</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { color-scheme: light only; }
+  html { background: #f5f5f3; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f3 !important; color: #1a1a18 !important; min-height: 100vh; padding: 1.5rem 1rem 3rem; }
+  .page { max-width: 780px; margin: 0 auto; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px; }
+  .logo-row { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 46px; height: 46px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-title { font-size: 20px; font-weight: 600; color: #1a1a18; }
+  .logo-sub { font-size: 13px; color: #6b6b68; margin-top: 2px; }
+  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .print-btn { font-size: 13px; padding: 7px 14px; border-radius: 8px; border: 1px solid #ccc; background: #fff; color: #444; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .print-btn:hover { background: #f0f0ee; }
+  .save-indicator { font-size: 11px; color: #aaa; display: flex; align-items: center; gap: 5px; padding: 5px 0; }
+  .save-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; transition: background 0.3s; }
+  .save-dot.saved { background: #1D9E75; }
+
+  .card { background: #fff; border: 1px solid #e5e5e2; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .section-label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 520px) { .form-grid, .form-grid.three { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field input, .field select, .field textarea { font-size: 13px; padding: 6px 10px; border: 1px solid #ddd; border-radius: 7px; background: #ffffff !important; color: #1a1a18 !important; font-family: inherit; -webkit-appearance: none; appearance: auto; }
+  .field input, .field select { height: 34px; }
+  .field textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #378ADD; box-shadow: 0 0 0 3px rgba(55,138,221,0.12); }
+  .product-select { width: 100%; font-size: 13px; padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; background: #ffffff !important; color: #1a1a18 !important; height: 38px; font-family: inherit; }
+  .product-select:focus { outline: none; border-color: #378ADD; box-shadow: 0 0 0 3px rgba(55,138,221,0.12); }
+
+  .progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+  .progress-bar-wrap { flex: 1; height: 6px; background: #ebebea; border-radius: 99px; overflow: hidden; }
+  .progress-bar { height: 100%; background: #1D9E75; border-radius: 99px; transition: width 0.3s; }
+  .progress-pct { font-size: 12px; font-weight: 600; color: #888; min-width: 34px; text-align: right; }
+
+  .station-card { border: 1px solid #e5e5e2; border-radius: 12px; overflow: hidden; margin-bottom: 10px; transition: box-shadow 0.15s; }
+  .station-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+  .initials-input { width: 52px; font-size: 12px; padding: 3px 7px; border: 1px solid #ddd; border-radius: 7px; background: #fff !important; color: #1a1a18 !important; text-align: center; height: 28px; text-transform: uppercase; font-family: inherit; }
+  .torque-pill { font-size: 11px; background: #FAEEDA; color: #854F0B; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+
+  .station-body { display: none; border-top: 1px solid #e5e5e2; }
+  .station-body.open { display: block; }
+  .body-tabs { display: flex; border-bottom: 1px solid #e5e5e2; background: #fafaf8; overflow-x: auto; }
+  .body-tab { font-size: 12px; font-weight: 500; padding: 8px 14px; cursor: pointer; color: #888; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.1s; white-space: nowrap; }
+  .body-tab.active { color: #1a1a18; border-bottom-color: #378ADD; font-weight: 600; }
+  .body-tab:hover { color: #444; }
+  .tab-panel { display: none; padding: 14px 16px; }
+  .tab-panel.active { display: block; }
+
+  .steps-list { display: flex; flex-direction: column; gap: 8px; }
+  .step-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border: 1px solid #e5e5e2; border-radius: 8px; cursor: pointer; transition: background 0.1s; }
+  .step-row:hover { background: #f8f8f6; }
+  .step-row.step-done { background: #f4fdf8; border-color: #a8dfc9; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; background: #ebebea; color: #666; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; transition: all 0.15s; }
+  .step-row.step-done .step-num { background: #1D9E75; color: #fff; }
+  .step-text { flex: 1; font-size: 13px; color: #1a1a18; line-height: 1.5; }
+  .step-row.step-done .step-text { color: #0a6045; }
+  .step-note { font-size: 11px; color: #888; margin-top: 2px; font-style: italic; }
+
+  .mat-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .mat-row { display: flex; align-items: flex-start; gap: 8px; padding: 7px 10px; background: #f8f8f6; border-radius: 8px; }
+  .mat-info { flex: 1; min-width: 0; }
+  .mat-name { font-size: 13px; color: #1a1a18; line-height: 1.3; }
+  .mat-part { font-size: 11px; color: #888; font-family: monospace; margin-top: 1px; }
+  .mat-loc { font-size: 10px; background: #E6F1FB; color: #185FA5; padding: 1px 7px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .tools-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .qc-block { border: 1px solid #e5e5e2; border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+  .qc-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f8f8f6; }
+  .qc-head-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #666; }
+  .qc-badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; margin-left: auto; font-weight: 500; }
+  .badge-pass { background: #E1F5EE; color: #085041; }
+  .badge-fail { background: #FCEBEB; color: #791F1F; }
+  .badge-pending { background: #f1f0ec; color: #666; }
+  .qc-body { padding: 12px 14px; }
+  .qc-checks { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .qc-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #e5e5e2; border-radius: 8px; cursor: pointer; }
+  .qc-row:hover { background: #f8f8f6; }
+  .qc-row.qc-checked { background: #f4fdf8; border-color: #a8dfc9; }
+  .qc-row.qc-failed { background: #FCEBEB; border-color: #F09595; }
+  .qc-box { width: 18px; height: 18px; border-radius: 4px; border: 2px solid #ccc; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .qc-row.qc-checked .qc-box { background: #1D9E75; border-color: #1D9E75; }
+  .qc-row.qc-checked .qc-box::after { content: ''; display: block; width: 4px; height: 8px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+  .qc-row.qc-failed .qc-box { background: #E24B4A; border-color: #E24B4A; }
+  .qc-row.qc-failed .qc-box::after { content: '✕'; color: #fff; font-size: 11px; font-weight: 700; line-height: 1; }
+  .qc-lbl { font-size: 13px; color: #1a1a18; flex: 1; }
+  .qc-row.qc-checked .qc-lbl { color: #085041; }
+  .qc-row.qc-failed .qc-lbl { color: #791F1F; }
+  .flag-btn { font-size: 11px; padding: 2px 9px; border: 1px solid #ddd; border-radius: 20px; background: transparent; color: #888; cursor: pointer; font-family: inherit; flex-shrink: 0; }
+  .flag-btn:hover { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+  .qc-signoff { display: grid; grid-template-columns: 1fr 1fr 110px; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ebebea; }
+  @media (max-width: 500px) { .qc-signoff { grid-template-columns: 1fr; } }
+  .verdict-row { display: flex; gap: 6px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .verdict-lbl { font-size: 12px; color: #888; margin-right: 4px; }
+  .vbtn { font-size: 12px; padding: 5px 14px; border-radius: 8px; border: 1px solid #ddd; background: #fff; color: #888; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 5px; }
+  .vbtn:hover { background: #f0f0ee; }
+  .vbtn.vpass { background: #E1F5EE; color: #085041; border-color: #5DCAA5; font-weight: 600; }
+  .vbtn.vfail { background: #FCEBEB; color: #791F1F; border-color: #F09595; font-weight: 600; }
+  .vbtn.vhold { background: #FAEEDA; color: #633806; border-color: #EF9F27; font-weight: 600; }
+
+  .actions { display: flex; gap: 8px; margin-top: 1.25rem; flex-wrap: wrap; }
+  .btn { font-size: 13px; padding: 8px 18px; border-radius: 8px; border: 1px solid #ddd; background: #fff; color: #444; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-weight: 500; }
+  .btn:hover { background: #f0f0ee; }
+  .btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .btn.primary:hover { background: #0F6E56; }
+  .btn.danger { color: #A32D2D; }
+  .btn.danger:hover { background: #FCEBEB; border-color: #F09595; }
+  .btn.export { background: #fff; color: #185FA5; border-color: #b3d0ee; }
+  .btn.export:hover { background: #E6F1FB; }
+
+  .complete-banner { padding: 12px 16px; background: #E1F5EE; border-radius: 10px; border: 1px solid #5DCAA5; margin-top: 1rem; font-size: 13px; color: #085041; display: none; align-items: center; gap: 8px; font-weight: 500; }
+  .complete-banner.show { display: flex; }
+
+  /* Saved sessions panel */
+  .sessions-panel { background: #fff; border: 1px solid #e5e5e2; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .sessions-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .session-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid #e5e5e2; border-radius: 8px; background: #fafaf8; cursor: pointer; }
+  .session-row:hover { background: #f0f0ee; border-color: #ccc; }
+  .session-info { flex: 1; min-width: 0; }
+  .session-name { font-size: 13px; font-weight: 500; color: #1a1a18; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .session-meta { font-size: 11px; color: #888; margin-top: 1px; }
+  .session-del { font-size: 11px; padding: 2px 8px; border: 1px solid #ddd; border-radius: 20px; background: transparent; color: #aaa; cursor: pointer; flex-shrink: 0; font-family: inherit; }
+  .session-del:hover { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+  .no-sessions { font-size: 13px; color: #bbb; text-align: center; padding: 12px 0; }
+
+  #no-product { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 14px; }
+  #no-product i { font-size: 40px; display: block; margin-bottom: 10px; color: #ddd; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a1a18; color: #fff; font-size: 13px; padding: 10px 20px; border-radius: 8px; opacity: 0; transition: all 0.25s; z-index: 999; white-space: nowrap; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .print-btn, .actions, .flag-btn, .body-tabs, .sessions-panel, .top-actions, .save-indicator, .toast { display: none !important; }
+    .station-body { display: block !important; }
+    .tab-panel { display: block !important; }
+    .station-card, .qc-block { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="top-bar">
+    <div class="logo-row">
+      <div class="logo-icon"><i class="ti ti-clipboard-check" style="font-size:22px;color:#185FA5;"></i></div>
+      <div>
+        <div class="logo-title">Assembly preflight checklist</div>
+        <div class="logo-sub" id="sub-model">Select a product to begin</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div class="save-indicator" id="save-indicator">
+        <div class="save-dot" id="save-dot"></div>
+        <span id="save-label">No active session</span>
+      </div>
+      <button class="print-btn" onclick="window.print()"><i class="ti ti-printer"></i> Print</button>
+    </div>
+  </div>
+
+  <!-- Saved sessions -->
+  <div class="sessions-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <p class="section-label" style="margin-bottom:0;"><i class="ti ti-device-floppy" style="font-size:13px;margin-right:4px;"></i> Saved sessions</p>
+      <div style="display:flex;gap:6px;">
+        <button class="btn export" onclick="exportSession()" style="padding:5px 12px;font-size:12px;"><i class="ti ti-download"></i> Export JSON</button>
+        <label class="btn" style="padding:5px 12px;font-size:12px;cursor:pointer;"><i class="ti ti-upload"></i> Import JSON<input type="file" accept=".json" onchange="importSession(event)" style="display:none"></label>
+      </div>
+    </div>
+    <div class="sessions-list" id="sessions-list"></div>
+  </div>
+
+  <!-- Product selector -->
+  <div class="card">
+    <p class="section-label">Product / model</p>
+    <select class="product-select" id="product-select" onchange="loadProduct()">
+      <option value="">— Select product —</option>
+      <optgroup label="IC Intercom — Indoor (Surface Mount)">
+        <option value="smt-single">Surface Mount Single Button Indoor Intercom (WL-IC-SMT-CAR/INF/SIP-I-W-R)</option>
+        <option value="smt-dual">Surface Mount Dual Button Indoor Intercom</option>
+        <option value="smt-panic">Surface Mount Panic Button Module</option>
+        <option value="smt-signal">SIP Alerter Indoor Intercom</option>
+      </optgroup>
+      <optgroup label="IC Intercom — Indoor (Back Mount)">
+        <option value="bm-single">Back Mount Single Button Intercom</option>
+        <option value="bm-dual">Back Mount Dual Button Intercom</option>
+        <option value="bm-none">Back Mount No Button Intercom</option>
+      </optgroup>
+      <optgroup label="IC Intercom — Indoor (Flush Mount)">
+        <option value="fm-single">Flush Mount Single Button Intercom</option>
+        <option value="fm-dual">Flush Mount Dual Button Intercom</option>
+        <option value="fm-none">Flush Mount No Button Intercom</option>
+      </optgroup>
+      <optgroup label="IC Intercom — Outdoor (2-Gang)">
+        <option value="2g-single">2-Gang Single Button Outdoor Intercom</option>
+        <option value="2g-dual">2-Gang 2-Button Outdoor Intercom</option>
+        <option value="2g-none">2-Gang No Button Outdoor Intercom</option>
+      </optgroup>
+      <optgroup label="Speakers — Ceiling / Surface Mount">
+        <option value="spkr-22a">WL-SPKR-22-A (2x2 Ceiling Speaker)</option>
+        <option value="spkr-22car">WL-SPKR-22-CAR/INF/SIP</option>
+        <option value="spkr-22-2r">WL-SPKR-22-2R</option>
+        <option value="spkr-smt-a">WL-SPKR-SMT-A (Surface Mount)</option>
+        <option value="spkr-smt-car">WL-SPKR-SMT-CAR/INF/SIP</option>
+      </optgroup>
+      <optgroup label="Speakers — Open Face">
+        <option value="spkr-of-a">WL-SPKR-OF-A</option>
+        <option value="spkr-of-car">WL-SPKR-OF-CAR/INF (Grey / OG White)</option>
+      </optgroup>
+      <optgroup label="Speakers — In-Ceiling (510/520/540)">
+        <option value="spkr-510">WL-SPKR-510-CAR/INF-F</option>
+        <option value="spkr-510d">WL-SPKR-510D-CAR/INF-F</option>
+        <option value="spkr-520">WL-SPKR-520-CAR/INF-F</option>
+        <option value="spkr-540">WL-SPKR-540-CAR/INF-F</option>
+      </optgroup>
+      <optgroup label="Zone Controllers">
+        <option value="zc-1ch-r">Zone Controller 1-Channel with Relay (WL-ZN-CTR-1CH-R)</option>
+        <option value="zc-1ch-car">Zone Controller 1-Channel Carina with Relay</option>
+        <option value="zc-1ch-inf">Zone Controller 1-Channel InformaCast with Relay</option>
+        <option value="zc-2ch">Zone Controller 2-Channel</option>
+        <option value="zc-2ch-inf">Zone Controller 2-Channel InformaCast</option>
+      </optgroup>
+      <optgroup label="Carina Controllers">
+        <option value="carina-pbx">Carina PBX (WL-PBX-CAR)</option>
+        <option value="carina-pbx-lite">Carina PBX Lite</option>
+        <option value="carina-em">Carina Event Manager</option>
+        <option value="carina-em-lite">Carina Event Manager Lite</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <!-- Production info -->
+  <div class="card">
+    <p class="section-label">Production info</p>
+    <div class="form-grid">
+      <div class="field"><label>Start by</label><input type="text" id="f-startby" placeholder="Operator name" oninput="schedSave()"></div>
+      <div class="field"><label>Date</label><input type="date" id="f-date" oninput="schedSave()"></div>
+      <div class="field"><label>Time</label><input type="time" id="f-time" oninput="schedSave()"></div>
+      <div class="field"><label>Assembly start date</label><input type="date" id="f-asmdate" oninput="schedSave()"></div>
+    </div>
+    <div class="form-grid three">
+      <div class="field"><label>Assembly team / line</label>
+        <select id="f-team" onchange="schedSave()">
+          <option>T1</option><option>T2</option><option>T3</option>
+          <option>Line 1</option><option>Line 2</option><option>Line 3</option>
+        </select>
+      </div>
+      <div class="field"><label>Completed by</label><input type="text" id="f-compby" placeholder="Operator name" oninput="schedSave()"></div>
+      <div class="field"><label>Completion date</label><input type="date" id="f-compdate" oninput="schedSave()"></div>
+    </div>
+  </div>
+
+  <div id="checklist-area" style="display:none;">
+    <div style="margin-bottom:1rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <p class="section-label" style="margin-bottom:0;">Assembly stations</p>
+        <div class="progress-row" style="margin-bottom:0;flex:1;margin-left:16px;">
+          <div class="progress-bar-wrap"><div class="progress-bar" id="pbar"></div></div>
+          <span class="progress-pct" id="ppct">0%</span>
+        </div>
+      </div>
+      <div id="stations-list"></div>
+    </div>
+
+    <div class="card">
+      <p class="section-label">Quality control sign-off</p>
+      <div id="qc-area"></div>
+    </div>
+
+    <div class="card">
+      <p class="section-label">Final disposition</p>
+      <div id="final-area"></div>
+    </div>
+
+    <div class="complete-banner" id="complete-banner">
+      <i class="ti ti-circle-check" style="font-size:20px;"></i>
+      All stations complete and QC signed off — ready for shipment.
+    </div>
+
+    <div class="actions">
+      <button class="btn danger" onclick="resetAll()"><i class="ti ti-refresh"></i> Reset all</button>
+      <button class="btn primary" onclick="markAllDone()"><i class="ti ti-check"></i> Mark stations complete</button>
+      <button class="btn" onclick="saveSession()"><i class="ti ti-device-floppy"></i> Save session</button>
+      <button class="btn" onclick="window.print()"><i class="ti ti-printer"></i> Print / PDF</button>
+    </div>
+  </div>
+
+  <div id="no-product">
+    <i class="ti ti-clipboard-list"></i>
+    Select a product above to load its checklist
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── PRODUCT DATA ────────────────────────────────────────────────────────────
+const PRODUCTS = {
+  "smt-single": {
+    name: "Surface Mount Single Button Indoor Intercom",
+    model: "WL-IC-SMT-CAR/INF/SIP-I-W-R",
+    stations: [
+      { id:"s1", title:"Station 1", subtitle:"PCB Assembly — Solder", torque:"1-2 on HTD",
+        steps:[
+          { text:"Put on gloves and N95 mask before handling solder materials.", note:"PPE required at this station." },
+          { text:"Break off 2-pin and 3-pin terminal blocks from the 10-pin strip (3102-88-1)." },
+          { text:"Apply flux to PC Board (4601-61-3) solder points." },
+          { text:"Solder MIC (3501-1-1) onto PC Board — verify polarity before soldering." },
+          { text:"Solder LED (1105-4-1) onto PC Board — verify polarity." },
+          { text:"Solder 5-pin connector (3101-28-1) onto PC Board." },
+          { text:"Apply flux remover to clean residue from all solder joints." },
+          { text:"Seat Mic/LED Gasket (4001-7-1) onto the board assembly.", note:"Inspect gasket for tears before placing." },
+          { text:"Set torque driver to 1-2 on HTD before proceeding to fasteners." }
+        ],
+        materials:[{n:"MIC",p:"3501-1-1"},{n:"LED",p:"1105-4-1"},{n:"PC Board",p:"4601-61-3"},{n:"5-pin connector",p:"3101-28-1"},{n:"Mic/LED Gasket",p:"4001-7-1"}],
+        tools:["Solder iron","Flux","Flux remover","Gloves & N95 mask","Break off 2 & 3-pin terminal block from 10-pin (3102-88-1)"]
+      },
+      { id:"s2", title:"Station 2", subtitle:"Faceplate Assembly", torque:"2-3 on HTD",
+        steps:[
+          { text:"Place single button faceplate (4701-81-1) face-down on wooden jig." },
+          { text:"Seat O-ring (3609-2-1) into faceplate groove — ensure full seating with no gaps." },
+          { text:"Install Mic/LED Gasket (4001-7-1) into the faceplate." },
+          { text:"Press push button (3303-2-1) into button aperture using tweezers." },
+          { text:"Place Speaker Gasket (4001-15-1) in speaker cavity." },
+          { text:"Set speaker (3502-7-1) onto gasket — do not force." },
+          { text:"Place Skinner (6005-13-1) over the assembly." },
+          { text:"Using magnetizer and T-15 bit, drive screws to torque setting 2-3 on HTD.", note:"Do not over-torque — faceplate may crack." }
+        ],
+        materials:[{n:"Single button faceplate",p:"4701-81-1"},{n:"Mic/LED Gasket",p:"4001-7-1"},{n:"O-ring",p:"3609-2-1"},{n:"Push button",p:"3303-2-1"},{n:"Speaker Gasket",p:"4001-15-1"},{n:"Speaker",p:"3502-7-1"},{n:"Skinner",p:"6005-13-1"}],
+        tools:["Wooden jig","Tweezers","Magnetizer","Screw Presenter","T-15 Bit","Heavy Torque Driver"]
+      },
+      { id:"s3", title:"Station 3", subtitle:"Chassis Assembly", torque:"",
+        steps:[
+          { text:"Place chassis on tabletop foam to protect surfaces." },
+          { text:"Install 9/16\" spacers (3611-12-1) at designated mounting points." },
+          { text:"Install 1/4\" Hex standoffs (3611-10-1) and secure with Hex locknuts (3612-5-1)." },
+          { text:"Install 1/4\" spacer (3611-13-1) at POE module mounting location." },
+          { text:"Seat POE Module (6011-3-8) onto spacers — align all headers before pressing down." },
+          { text:"Secure POE module using 1/4\" socket head cap screws (3603-17-1)." },
+          { text:"Route speaker cable (4801-8-1) from speaker to PCB connector — avoid sharp bends." },
+          { text:"Secure cable routing with masking tape as needed during assembly." },
+          { text:"Connect headset and verify audio path before closing chassis." }
+        ],
+        materials:[{n:"Speaker cable",p:"4801-8-1"},{n:"9/16\" spacers",p:"3611-12-1"},{n:"1/4\" Hex standoff",p:"3611-10-1"},{n:"Hex locknut",p:"3612-5-1"},{n:"POE Module",p:"6011-3-8"},{n:"1/4\" spacer",p:"3611-13-1"},{n:"1/2\" Socket head cap",p:"3603-16-1"},{n:"1/4\" Socket head cap",p:"3603-17-1"}],
+        tools:["Headset","Masking Tape","Tweezers/Jumpers","Tabletop Foam"]
+      },
+      { id:"s4", title:"Station 4", subtitle:"Test & Label", torque:"",
+        steps:[
+          { text:"Power unit via PoE and confirm LED indicator activates." },
+          { text:"Test microphone input — perform loopback or call test." },
+          { text:"Test speaker output — confirm clear audio with no distortion." },
+          { text:"Test push button — confirm registration with no sticking or false triggers." },
+          { text:"Secure all internal cables with Nylon Cable tie (3607-1-1)." },
+          { text:"Apply DSP Label (4502-5-1) in designated location — confirm orientation and legibility." },
+          { text:"Verify label firmware version matches programmed unit." }
+        ],
+        materials:[{n:"Nylon Cable tie",p:"3607-1-1"},{n:"DSP Label",p:"4502-5-1"}],
+        tools:[]
+      },
+      { id:"s5", title:"Station 5", subtitle:"Packaging", torque:"",
+        steps:[
+          { text:"Insert unit into back box (4301-58-4) — confirm flush fit." },
+          { text:"Install Spring Nuts (3612-9-1) at mounting bracket positions." },
+          { text:"Insert 8-32x3/8\" Flat Socket cap screws (3603-26-1) into spring nut locations." },
+          { text:"Verify all hardware is accounted for in the kit." },
+          { text:"Place unit into shipping box (4301-15-1) with protective foam." },
+          { text:"Seal box and verify shipping label matches work order — model, serial, quantity." }
+        ],
+        materials:[{n:"Back box",p:"4301-58-4"},{n:"Spring Nut",p:"3612-9-1"},{n:"8-32x3/8\" Flat Socket cap screw",p:"3603-26-1"},{n:"Shipping Box",p:"4301-15-1"}],
+        tools:[]
+      }
+    ]
+  },
+  "spkr-22a": {
+    name: "2x2 Ceiling Speaker", model: "WL-SPKR-22-A",
+    stations: [
+      { id:"s1", title:"Station 1", subtitle:"Housing & Board Assembly", torque:"1-2 on HTD (Screw 3605-5-1)",
+        steps:[
+          { text:"Confirm bin is labeled with correct part number before pulling parts.", note:"Never mix parts from unlabeled bins." },
+          { text:"Place Diecast Housing (4701-181-2) on jig, face-down." },
+          { text:"Place Foam Square (3922-1-1) at designated dampening location inside housing." },
+          { text:"Place Aluminum Spacer (3611-16-1) at board mounting point." },
+          { text:"Seat Rusty Board (6005-15-4) onto spacer — align mounting holes." },
+          { text:"Load magnetized T-15 bit into screw presenter with 6-32x1/2 screws (3605-5-1)." },
+          { text:"Drive screws to torque setting 1-2 on Blue Switch Heavy Torque Driver." },
+          { text:"Inspect board seating — no rocking or gaps between board and housing." }
+        ],
+        materials:[{n:"Diecast Housing",p:"4701-181-2",loc:"LANE 3 & 4"},{n:"6-32x1/2 T-15 Drive Screw",p:"3605-5-1",loc:"SHELF 2-C"},{n:"Rusty Board",p:"6005-15-4",loc:"LANE 4"},{n:"Foam Square",p:"3922-1-1",loc:"SHELF 9-E"},{n:"Aluminum Spacer",p:"3611-16-1",loc:"SHELF 3-A"}],
+        tools:["Tweezers","Jigs","Screw Presenter","Magnetizer","Medium/Long T-15 Bit","Blue Switch Heavy Torque Driver","Bin labeled with correct part number"]
+      },
+      { id:"s2", title:"Station 2", subtitle:"Speaker Installation", torque:"2-3 on HTD (Screw 3605-5-1)",
+        steps:[
+          { text:"Place Speaker Guard over housing opening before handling speaker." },
+          { text:"Orient Speaker (3502-11-1) — verify polarity markings align with housing." },
+          { text:"Lower speaker onto mounting points — do not drop or force." },
+          { text:"Using magnetized T-15 bit and screw presenter, start all 4 screws (3605-5-1) by hand first." },
+          { text:"Drive screws to torque setting 2-3 on HTD in a star/cross pattern.", note:"Cross pattern ensures even seating." },
+          { text:"Tap speaker grille lightly — confirm no rattle or movement." }
+        ],
+        materials:[{n:"6-32x1/2 T-15 Drive Screw",p:"3605-5-1",loc:"SHELF 2-C"},{n:"Speaker",p:"3502-11-1",loc:"LANE 4"}],
+        tools:["Speaker Guard","Tweezers","Magnetizer","Screw Presenter","T-15 Bit","Heavy Torque Driver","Bin labeled with correct part number"]
+      },
+      { id:"s3", title:"Station 3", subtitle:"Testing & Labeling", torque:"",
+        steps:[
+          { text:"Connect unit via PoE cable — confirm power LED activates." },
+          { text:"Play test tone through speaker — confirm clear output, no distortion." },
+          { text:"Verify microphone with loopback test using headset." },
+          { text:"Load thermal label roll and Ribbon Roll (Film) into printer." },
+          { text:"Print DSP label — verify correct model, firmware version, and serial number." },
+          { text:"Apply label at designated location — confirm straight alignment and full adhesion." },
+          { text:"Mask any exposed surfaces with masking tape to protect during final assembly." }
+        ],
+        materials:[{n:"Testing"}],
+        tools:["Headset","Masking Tape","Tweezers/Jumpers","Tabletop Foam","Plastic Thermal Print roll (Label)","Ribbon Roll (Film)"]
+      },
+      { id:"s4", title:"Station 4", subtitle:"Packaging", torque:"",
+        steps:[
+          { text:"Retrieve 2x2 Ceiling Grill (4703-1-2) from LANE 3 — inspect for scratches." },
+          { text:"Align grill to housing — confirm all rivet holes line up." },
+          { text:"Using rivet gun, install Rivets (3608-1-1) at all four corners." },
+          { text:"Inspect rivets — all must be flush with no protrusion." },
+          { text:"Place Box Foam (4301-28-2) in base of Shipping Box (4301-38-1)." },
+          { text:"Place assembled unit into box — foam should contact all sides." },
+          { text:"Seal box. Attach pallet date code sheet if palletizing on 42x45 pallet." },
+          { text:"Verify shipping label matches work order — model, serial, quantity." }
+        ],
+        materials:[{n:"2x2 Ceiling Grill",p:"4703-1-2",loc:"LANE 3"},{n:"Rivets",p:"3608-1-1",loc:"SHELF 3-E"},{n:"Shipping Box",p:"4301-38-1",loc:"LANE 1"},{n:"Box Foam",p:"4301-28-2",loc:"BAY 2A/2C"}],
+        tools:["Rivet Gun","Scissors/Box cutter","Masking Tape","42x45 Pallet","Pallet Date Code Sheet","Bin labeled with correct part number"]
+      }
+    ]
+  },
+  "zc-1ch-r": {
+    name: "Zone Controller 1-Channel with Relay", model: "WL-ZN-CTR-1CH-R",
+    stations: [
+      { id:"s1", title:"Station 1", subtitle:"Parts & Board Assembly", torque:"2-3 on HTD (Screw 3605-8-1)",
+        steps:[
+          { text:"Confirm bin is labeled with correct part number before pulling parts." },
+          { text:"Place 1-U Extrusion (4701-81-1) on tabletop foam." },
+          { text:"Apply Foam Tape 0.25\" (3922-1-1) to designated internal mounting surface." },
+          { text:"Seat CCA Carina Board (6005-4-5) into extrusion — align mounting holes." },
+          { text:"Seat CCA PM Module Bailey (6005-12-2) onto Carina board headers." },
+          { text:"Place Faceplate Steve/Bailey (4701-135-1) onto extrusion front." },
+          { text:"Place outer Faceplate (4701-109-3) over front." },
+          { text:"Load 6-32-3/3 T-15 screws (3605-8-1) into screw presenter." },
+          { text:"Drive all screws to 2-3 on HTD using Blue Switch Heavy Torque Driver.", note:"Medium/Long T-15 bit preferred for depth clearance." }
+        ],
+        materials:[{n:"Screw, Thread Forming 6-32-3/3 T-15",p:"3605-8-1",loc:"SHELF 2-A"},{n:"Faceplate",p:"4701-109-3",loc:"SHELF 5-E"},{n:"Foam Tape 0.25\"",p:"3922-1-1",loc:"SHELF 9-E"},{n:"CCA, Tested & Programmed, Carina",p:"6005-4-5",loc:"LANE 4"},{n:"CCA, PM Module Bailey",p:"6005-12-2",loc:"LANE 4"},{n:"1-U Extrusion 4.95-4.97 in",p:"4701-81-1",loc:"LANE 2"},{n:"Faceplate, 1-U Steve/Bailey",p:"4701-135-1",loc:"SHELF 5-D"}],
+        tools:["Tabletop Foam","Medium/Long 3.5 or 6\" T-15 Bit","Blue Switch Heavy Torque Driver","Bin labeled with correct part number"]
+      },
+      { id:"s2", title:"Station 2", subtitle:"Testing", torque:"",
+        steps:[
+          { text:"Connect unit via PoE cable — confirm power-on, no fault LED." },
+          { text:"Connect Headset and Aux/RCA Cable to audio outputs." },
+          { text:"Connect Aux 2-Pin Audio Cable — verify relay contact functionality." },
+          { text:"Connect external Speaker to speaker output — confirm clear audio output." },
+          { text:"Verify Carina/InformaCast network registration via management interface." },
+          { text:"Print 3x1\" thermal label (4502-6-1) — confirm model and firmware version." },
+          { text:"Print 4x2\" thermal label (4502-3-001) for outer carton." },
+          { text:"Apply both labels in designated locations — verify alignment and adhesion." }
+        ],
+        materials:[{n:"Label 3x1\" Thermal",p:"4502-6-1",loc:"SHELF 11-E"},{n:"Label 4x2\" Thermal",p:"4502-3-001",loc:"SHELF 11-E"}],
+        tools:["Headset","Aux/RCA Cable","Aux 2-Pin Audio Cable","PoE Cable","Speaker"]
+      },
+      { id:"s3", title:"Station 3", subtitle:"Part Kit & Packaging", torque:"",
+        steps:[
+          { text:"Retrieve a 2x3\" resealable plastic bag (4303-1-1)." },
+          { text:"Place 2-pin screw terminal 3.5mm (3102-29-1) into bag." },
+          { text:"Place 6-pin screw terminal 3.5mm (3102-28-1) into bag." },
+          { text:"Place 8-pin screw terminal with retention (3102-40-1) into bag." },
+          { text:"Place Ferrite cable clamp (2331-1-1) into bag." },
+          { text:"Seal hardware bag and set aside." },
+          { text:"Wrap unit in bubble wrap — all surfaces covered." },
+          { text:"Place unit and hardware bag into 6x4.75x2 mailer box (4301-3-1)." },
+          { text:"Seal box — confirm shipping label matches work order." }
+        ],
+        materials:[{n:"Plastic bag 2x3\" resealable",p:"4303-1-1",loc:"SHELF 4-B"},{n:"2-pin screw terminal 3.5mm",p:"3102-29-1",loc:"SHELF 1-F"},{n:"6-pin screw terminal 3.5mm",p:"3102-28-1",loc:"SHELF 1-F"},{n:"8-pin screw terminal w/ retention",p:"3102-40-1",loc:"SHELF 1-E"},{n:"Ferrite cable clamp",p:"2331-1-1",loc:"SHELF 1-G"},{n:"Mailer box 6x4.75x2",p:"4301-3-1",loc:"LANE 1"},{n:"Bubble wrap"}],
+        tools:[]
+      }
+    ]
+  },
+  "carina-pbx": {
+    name: "Carina PBX", model: "WL-PBX-CAR",
+    stations: [
+      { id:"s1", title:"Station 1", subtitle:"Board & Chassis Assembly", torque:"2-3 on HTD (Screw 3605-8-1)",
+        steps:[
+          { text:"Confirm bin is labeled with correct part number before pulling parts." },
+          { text:"Place 1-U Extrusion (4701-84-1) on tabletop foam." },
+          { text:"Apply Square Foam Tape 0.25\" (3922-1-1) to designated internal mounting surface." },
+          { text:"Seat CCA Voyd Board (6005-19-3) into extrusion — align all mounting holes." },
+          { text:"Seat CCA PM Module Simper (6005-27-1) onto Voyd board headers — press evenly." },
+          { text:"Use tweezers to seat any small header connectors." },
+          { text:"Place Faceplate Steve/Bailey (4701-182-1) onto extrusion front." },
+          { text:"Place outer Faceplate (4701-92-2) over front." },
+          { text:"Drive 6-32-3/3 T-15 screws (3605-8-1) to 2-3 on HTD." }
+        ],
+        materials:[{n:"Screw, Thread Forming 6-32-3/3 T-15",p:"3605-8-1",loc:"SHELF 2-A"},{n:"Faceplate",p:"4701-92-2",loc:"SHELF 5-E"},{n:"Square Foam Tape 0.25\"",p:"3922-1-1",loc:"SHELF 9-E"},{n:"CCA, Tested & Programmed, Voyd",p:"6005-19-3",loc:"LANE 4"},{n:"CCA, PM Module Simper",p:"6005-27-1",loc:"LANE 4"},{n:"1-U Extrusion 4.95-4.97 in",p:"4701-84-1",loc:"LANE 2"},{n:"Faceplate, 1-U Steve/Bailey",p:"4701-182-1",loc:"SHELF 5-C"}],
+        tools:["Tabletop Foam","Medium/Long 3.5 or 6\" T-15 Bit","Blue Switch Heavy Torque Driver","Bin labeled with correct part number","Tweezers"]
+      },
+      { id:"s2", title:"Station 2", subtitle:"Testing", torque:"",
+        steps:[
+          { text:"Connect unit via PoE cable — confirm power-on, no fault LED." },
+          { text:"Verify Carina PBX network registration and PBX extension routing." },
+          { text:"Place a test call through the PBX — confirm audio path in both directions." },
+          { text:"Print 3x1\" thermal label (4502-6-1) — verify model, firmware, and serial." },
+          { text:"Print 4x2\" thermal label (4502-3-001) for outer carton." },
+          { text:"Apply both labels — confirm alignment and adhesion." }
+        ],
+        materials:[{n:"Label 3x1\" Thermal",p:"4502-6-1",loc:"SHELF 11-E"},{n:"Label 4x2\" Thermal",p:"4502-3-001",loc:"SHELF 11-E"}],
+        tools:["PoE Cable"]
+      },
+      { id:"s3", title:"Station 3", subtitle:"Part Kit & Packaging", torque:"",
+        steps:[
+          { text:"Retrieve a 2x3\" resealable plastic bag (4303-1-1)." },
+          { text:"Place 2-pin screw terminal 3.5mm (3102-29-1) into bag." },
+          { text:"Place 6-pin screw terminal 3.5mm (3102-28-1) into bag." },
+          { text:"Seal hardware bag and set aside." },
+          { text:"Wrap unit in bubble wrap — all surfaces covered." },
+          { text:"Place unit and hardware bag into 6x4.75x2 mailer box (4301-3-1)." },
+          { text:"Seal box — confirm shipping label matches work order." }
+        ],
+        materials:[{n:"Plastic bag 2x3\" resealable",p:"4303-1-1",loc:"SHELF 4-B"},{n:"2-pin screw terminal 3.5mm",p:"3102-29-1",loc:"SHELF 1-F"},{n:"6-pin screw terminal 3.5mm",p:"3102-28-1",loc:"SHELF 1-F"},{n:"Mailer box 6x4.75x2",p:"4301-3-1",loc:"LANE 1"}],
+        tools:[]
+      }
+    ]
+  }
+};
+
+const ALIASES = {
+  "smt-dual":"smt-single","smt-signal":"smt-single","smt-panic":"smt-single",
+  "bm-single":"smt-single","bm-dual":"smt-single","bm-none":"smt-single",
+  "fm-single":"smt-single","fm-dual":"smt-single","fm-none":"smt-single",
+  "2g-single":"smt-single","2g-dual":"smt-single","2g-none":"smt-single",
+  "spkr-22car":"spkr-22a","spkr-22-2r":"spkr-22a","spkr-smt-a":"spkr-22a",
+  "spkr-smt-car":"spkr-22a","spkr-of-a":"spkr-22a","spkr-of-car":"spkr-22a",
+  "spkr-510":"spkr-22a","spkr-510d":"spkr-22a","spkr-520":"spkr-22a","spkr-540":"spkr-22a",
+  "zc-1ch-car":"zc-1ch-r","zc-1ch-inf":"zc-1ch-r","zc-2ch":"zc-1ch-r","zc-2ch-inf":"zc-1ch-r",
+  "carina-pbx-lite":"carina-pbx","carina-em":"carina-pbx","carina-em-lite":"carina-pbx"
+};
+
+const QC_SECTIONS = [
+  { id:"qc-visual", title:"Visual inspection", checks:[
+    "No scratches, dents, or cosmetic defects on housing/faceplate",
+    "All labels applied correctly — position, orientation, legibility",
+    "No excess flux residue on PCB","Gaskets seated properly with no gaps or tears",
+    "Cable routing clean and secured with cable tie","All fasteners present and flush — no cross-threading"
+  ]},
+  { id:"qc-mech", title:"Mechanical / torque verification", checks:[
+    "All screws torqued to spec per torque driver setting","Buttons actuate smoothly — no binding or excessive travel",
+    "Speaker grille secured — no rattle when tapped","Back box or enclosure closes flush — no gaps","POE module properly seated and locked"
+  ]},
+  { id:"qc-func", title:"Functional test", checks:[
+    "Unit powers on via PoE without fault LED","Audio output confirmed — speaker produces clear tone",
+    "Microphone input active — loopback or call test passed","Button(s) register correctly — no false triggers or sticking",
+    "DSP/firmware label matches programmed version","Network registration confirmed (SIP/Carina/InformaCast as applicable)"
+  ]},
+  { id:"qc-pkg", title:"Packaging & documentation", checks:[
+    "Correct part kit included (terminal blocks, ferrites, hardware bag)",
+    "Shipping label matches work order — model, serial, quantity","Box sealed and undamaged","Pallet date code sheet attached (if palletized)"
+  ]}
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let stDone={}, stOpen={}, stStepDone={}, stTab={}, stMatDone={}, stToolDone={}, stInitials={};
+let qcChecked={}, qcFailed={}, qcSignoffs={}, verdicts={};
+let currentProduct=null, currentProductKey='', activeSessionId=null;
+let saveTimer=null;
+
+// ─── STORAGE HELPERS ─────────────────────────────────────────────────────────
+const LS_KEY = 'preflight_sessions';
+
+function getSessions() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { return {}; }
+}
+
+function putSessions(sessions) {
+  localStorage.setItem(LS_KEY, JSON.stringify(sessions));
+}
+
+function collectFormData() {
+  return {
+    startby: document.getElementById('f-startby').value,
+    date: document.getElementById('f-date').value,
+    time: document.getElementById('f-time').value,
+    asmdate: document.getElementById('f-asmdate').value,
+    team: document.getElementById('f-team').value,
+    compby: document.getElementById('f-compby').value,
+    compdate: document.getElementById('f-compdate').value,
+  };
+}
+
+function applyFormData(fd) {
+  if (!fd) return;
+  document.getElementById('f-startby').value = fd.startby || '';
+  document.getElementById('f-date').value = fd.date || '';
+  document.getElementById('f-time').value = fd.time || '';
+  document.getElementById('f-asmdate').value = fd.asmdate || '';
+  const teamEl = document.getElementById('f-team');
+  if (fd.team) { for (let o of teamEl.options) { if (o.value===fd.team||o.text===fd.team) { o.selected=true; break; } } }
+  document.getElementById('f-compby').value = fd.compby || '';
+  document.getElementById('f-compdate').value = fd.compdate || '';
+}
+
+function buildSnapshot() {
+  const fd = collectFormData();
+  // collect QC signoff field values from DOM
+  QC_SECTIONS.forEach(sec => {
+    ['name','date','time'].forEach(f => {
+      const el = document.getElementById('qcs-'+sec.id+'-'+f);
+      if (el) qcSignoffs[sec.id][f] = el.value;
+    });
+  });
+  const finalNotes = document.getElementById('final-notes');
+  const finalName = document.getElementById('final-name');
+  const finalDate = document.getElementById('final-date');
+  const finalTime = document.getElementById('final-time');
+  const finalWo = document.getElementById('final-wo');
+  const finalSerial = document.getElementById('final-serial');
+  return {
+    productKey: currentProductKey,
+    form: fd,
+    initials: {...stInitials},
+    stDone: {...stDone}, stStepDone: {...stStepDone},
+    stMatDone: {...stMatDone}, stToolDone: {...stToolDone},
+    stTab: {...stTab}, stOpen: {...stOpen},
+    qcChecked: {...qcChecked}, qcFailed: {...qcFailed},
+    qcSignoffs: JSON.parse(JSON.stringify(qcSignoffs)),
+    verdicts: {...verdicts},
+    finalFields: {
+      notes: finalNotes ? finalNotes.value : '',
+      name: finalName ? finalName.value : '',
+      date: finalDate ? finalDate.value : '',
+      time: finalTime ? finalTime.value : '',
+      wo: finalWo ? finalWo.value : '',
+      serial: finalSerial ? finalSerial.value : ''
+    }
+  };
+}
+
+function restoreSnapshot(snap) {
+  stDone = snap.stDone || {};
+  stStepDone = snap.stStepDone || {};
+  stMatDone = snap.stMatDone || {};
+  stToolDone = snap.stToolDone || {};
+  stInitials = snap.initials || {};
+  stTab = snap.stTab || {};
+  stOpen = snap.stOpen || {};
+  qcChecked = snap.qcChecked || {};
+  qcFailed = snap.qcFailed || {};
+  qcSignoffs = snap.qcSignoffs || {};
+  verdicts = snap.verdicts || {};
+  applyFormData(snap.form);
+  // ensure missing keys are initialized
+  if (currentProduct) {
+    currentProduct.stations.forEach(s => {
+      if (stDone[s.id]===undefined) stDone[s.id]=false;
+      if (stOpen[s.id]===undefined) stOpen[s.id]=false;
+      if (stTab[s.id]===undefined) stTab[s.id]='steps';
+      s.steps.forEach((_,i) => { if (stStepDone[s.id+'-'+i]===undefined) stStepDone[s.id+'-'+i]=false; });
+      s.materials.forEach((_,i) => { if (stMatDone[s.id+'-m'+i]===undefined) stMatDone[s.id+'-m'+i]=false; });
+      s.tools.forEach((_,i) => { if (stToolDone[s.id+'-t'+i]===undefined) stToolDone[s.id+'-t'+i]=false; });
+    });
+    QC_SECTIONS.forEach(sec => {
+      sec.checks.forEach((_,i) => {
+        if (qcChecked[sec.id+'-'+i]===undefined) qcChecked[sec.id+'-'+i]=false;
+        if (qcFailed[sec.id+'-'+i]===undefined) qcFailed[sec.id+'-'+i]=false;
+      });
+      if (!qcSignoffs[sec.id]) qcSignoffs[sec.id]={name:'',date:'',time:''};
+      if (verdicts[sec.id]===undefined) verdicts[sec.id]='';
+    });
+  }
+}
+
+// ─── AUTO-SAVE ────────────────────────────────────────────────────────────────
+function schedSave() {
+  if (!activeSessionId) return;
+  clearTimeout(saveTimer);
+  setSaveIndicator('saving');
+  saveTimer = setTimeout(() => { persistSession(activeSessionId); }, 800);
+}
+
+function persistSession(id) {
+  const sessions = getSessions();
+  if (!sessions[id]) return;
+  sessions[id].snapshot = buildSnapshot();
+  sessions[id].updatedAt = new Date().toISOString();
+  putSessions(sessions);
+  setSaveIndicator('saved');
+  renderSessionsList();
+}
+
+function setSaveIndicator(state) {
+  const dot = document.getElementById('save-dot');
+  const lbl = document.getElementById('save-label');
+  if (state==='saved') { dot.className='save-dot saved'; lbl.textContent='Saved'; }
+  else if (state==='saving') { dot.className='save-dot'; lbl.textContent='Saving…'; }
+  else { dot.className='save-dot'; lbl.textContent='No active session'; }
+}
+
+// ─── SESSION MANAGEMENT ──────────────────────────────────────────────────────
+function saveSession() {
+  if (!currentProduct) { toast('Select a product first'); return; }
+  const fd = collectFormData();
+  const label = prompt('Name this session (e.g. WO-1234 / operator initials):', fd.startby ? fd.startby+' — '+currentProduct.name : currentProduct.name);
+  if (!label) return;
+  const id = 'sess_' + Date.now();
+  const sessions = getSessions();
+  sessions[id] = {
+    id, label,
+    productKey: currentProductKey,
+    productName: currentProduct.name,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    snapshot: buildSnapshot()
+  };
+  putSessions(sessions);
+  activeSessionId = id;
+  setSaveIndicator('saved');
+  renderSessionsList();
+  toast('Session saved: ' + label);
+}
+
+function loadSession(id) {
+  const sessions = getSessions();
+  const sess = sessions[id];
+  if (!sess) return;
+  const key = ALIASES[sess.productKey] || sess.productKey;
+  if (!PRODUCTS[key]) { toast('Product not found in this version'); return; }
+  currentProductKey = sess.productKey;
+  currentProduct = PRODUCTS[key];
+  document.getElementById('product-select').value = sess.productKey;
+  document.getElementById('sub-model').textContent = sess.productName || currentProduct.name;
+  // init all state to defaults first
+  stDone={}; stOpen={}; stStepDone={}; stTab={}; stMatDone={}; stToolDone={}; stInitials={};
+  qcChecked={}; qcFailed={}; qcSignoffs={}; verdicts={};
+  currentProduct.stations.forEach(s => {
+    stDone[s.id]=false; stOpen[s.id]=false; stTab[s.id]='steps';
+    s.steps.forEach((_,i) => { stStepDone[s.id+'-'+i]=false; });
+    s.materials.forEach((_,i) => { stMatDone[s.id+'-m'+i]=false; });
+    s.tools.forEach((_,i) => { stToolDone[s.id+'-t'+i]=false; });
+  });
+  QC_SECTIONS.forEach(sec => {
+    sec.checks.forEach((_,i) => { qcChecked[sec.id+'-'+i]=false; qcFailed[sec.id+'-'+i]=false; });
+    qcSignoffs[sec.id]={name:'',date:'',time:''}; verdicts[sec.id]='';
+  });
+  // restore snapshot
+  restoreSnapshot(sess.snapshot);
+  document.getElementById('checklist-area').style.display='block';
+  document.getElementById('no-product').style.display='none';
+  activeSessionId = id;
+  setSaveIndicator('saved');
+  render();
+  // restore final fields after render (they are dynamically injected by renderFinal)
+  setTimeout(() => {
+    const ff = sess.snapshot.finalFields || {};
+    ['notes','name','date','time','wo','serial'].forEach(f => {
+      const el = document.getElementById('final-'+f);
+      if (el && ff[f]) el.value = ff[f];
+    });
+    QC_SECTIONS.forEach(sec => {
+      ['name','date','time'].forEach(f => {
+        const el = document.getElementById('qcs-'+sec.id+'-'+f);
+        if (el) { el.value = qcSignoffs[sec.id][f] || ''; el.addEventListener('input', ()=>schedSave()); }
+      });
+    });
+    ['notes','name','date','time','wo','serial'].forEach(f => {
+      const el = document.getElementById('final-'+f);
+      if (el) el.addEventListener('input', ()=>schedSave());
+    });
+  }, 30);
+  toast('Loaded: ' + sess.label);
+}
+
+function deleteSession(id, e) {
+  e.stopPropagation();
+  const sessions = getSessions();
+  const name = sessions[id] ? sessions[id].label : 'this session';
+  if (!confirm('Delete "' + name + '"?')) return;
+  delete sessions[id];
+  putSessions(sessions);
+  if (activeSessionId === id) { activeSessionId = null; setSaveIndicator('none'); }
+  renderSessionsList();
+  toast('Session deleted');
+}
+
+function renderSessionsList() {
+  const sessions = getSessions();
+  const keys = Object.keys(sessions).sort((a,b) => sessions[b].updatedAt.localeCompare(sessions[a].updatedAt));
+  const container = document.getElementById('sessions-list');
+  if (!keys.length) { container.innerHTML='<div class="no-sessions">No saved sessions yet</div>'; return; }
+  container.innerHTML = keys.map(id => {
+    const s = sessions[id];
+    const d = new Date(s.updatedAt);
+    const dateStr = d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) + ' ' + d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+    const isActive = id === activeSessionId;
+    return `<div class="session-row" onclick="loadSession('${id}')" style="${isActive?'border-color:#5DCAA5;background:#f4fdf8;':''}">
+      <i class="ti ti-file-check" style="font-size:16px;color:${isActive?'#1D9E75':'#aaa'};flex-shrink:0;"></i>
+      <div class="session-info">
+        <div class="session-name" style="${isActive?'color:#0a6045;font-weight:600;':''}">${s.label}${isActive?' ✦':''}</div>
+        <div class="session-meta">${s.productName} &nbsp;·&nbsp; Last saved ${dateStr}</div>
+      </div>
+      <button class="session-del" onclick="deleteSession('${id}',event)">Delete</button>
+    </div>`;
+  }).join('');
+}
+
+function exportSession() {
+  if (!activeSessionId) { toast('No active session to export'); return; }
+  const sessions = getSessions();
+  const sess = sessions[activeSessionId];
+  if (!sess) return;
+  sess.snapshot = buildSnapshot();
+  const blob = new Blob([JSON.stringify(sess, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'preflight_' + sess.label.replace(/[^a-z0-9]/gi,'_') + '.json';
+  a.click();
+  toast('Exported: ' + sess.label);
+}
+
+function importSession(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const sess = JSON.parse(e.target.result);
+      if (!sess.id || !sess.snapshot) { toast('Invalid session file'); return; }
+      sess.id = 'sess_' + Date.now(); // new id to avoid collision
+      const sessions = getSessions();
+      sessions[sess.id] = sess;
+      putSessions(sessions);
+      renderSessionsList();
+      loadSession(sess.id);
+      toast('Imported: ' + sess.label);
+    } catch { toast('Could not read file'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ─── PRODUCT LOAD ─────────────────────────────────────────────────────────────
+function loadProduct() {
+  const sel = document.getElementById('product-select').value;
+  document.getElementById('no-product').style.display = sel ? 'none' : 'block';
+  if (!sel) { document.getElementById('checklist-area').style.display='none'; return; }
+  const key = ALIASES[sel] || sel;
+  currentProductKey = sel;
+  currentProduct = PRODUCTS[key];
+  const selOpt = document.getElementById('product-select').selectedOptions[0];
+  document.getElementById('sub-model').textContent = selOpt.text;
+  stDone={}; stOpen={}; stStepDone={}; stTab={}; stMatDone={}; stToolDone={}; stInitials={};
+  qcChecked={}; qcFailed={}; qcSignoffs={}; verdicts={};
+  currentProduct.stations.forEach(s => {
+    stDone[s.id]=false; stOpen[s.id]=false; stTab[s.id]='steps';
+    s.steps.forEach((_,i) => { stStepDone[s.id+'-'+i]=false; });
+    s.materials.forEach((_,i) => { stMatDone[s.id+'-m'+i]=false; });
+    s.tools.forEach((_,i) => { stToolDone[s.id+'-t'+i]=false; });
+  });
+  QC_SECTIONS.forEach(sec => {
+    sec.checks.forEach((_,i) => { qcChecked[sec.id+'-'+i]=false; qcFailed[sec.id+'-'+i]=false; });
+    qcSignoffs[sec.id]={name:'',date:'',time:''}; verdicts[sec.id]='';
+  });
+  document.getElementById('checklist-area').style.display='block';
+  activeSessionId = null;
+  setSaveIndicator('none');
+  const today=new Date().toISOString().split('T')[0];
+  const now=new Date().toTimeString().slice(0,5);
+  document.getElementById('f-date').value=today;
+  document.getElementById('f-time').value=now;
+  document.getElementById('f-asmdate').value=today;
+  render();
+}
+
+// ─── CHECKLIST ACTIONS ───────────────────────────────────────────────────────
+function toggleStation(id) { stOpen[id]=!stOpen[id]; render(); schedSave(); }
+
+function markStationDone(id) {
+  stDone[id]=!stDone[id];
+  if (stDone[id] && currentProduct) {
+    const s=currentProduct.stations.find(s=>s.id===id);
+    if (s) s.steps.forEach((_,i)=>{ stStepDone[id+'-'+i]=true; });
+  }
+  render(); schedSave();
+}
+
+function toggleStep(sid,i) {
+  stStepDone[sid+'-'+i]=!stStepDone[sid+'-'+i];
+  if (currentProduct) {
+    const s=currentProduct.stations.find(s=>s.id===sid);
+    if (s && s.steps.every((_,j)=>stStepDone[sid+'-'+j])) stDone[sid]=true;
+    else stDone[sid]=false;
+  }
+  render(); schedSave();
+}
+
+function switchTab(sid,tab) { stTab[sid]=tab; render(); }
+function toggleMat(sid,i) { stMatDone[sid+'-m'+i]=!stMatDone[sid+'-m'+i]; render(); schedSave(); }
+function toggleTool(sid,i) { stToolDone[sid+'-t'+i]=!stToolDone[sid+'-t'+i]; render(); schedSave(); }
+
+function markAllMats(sid) {
+  const s=currentProduct.stations.find(s=>s.id===sid);
+  if (!s) return;
+  const allDone=s.materials.every((_,i)=>stMatDone[sid+'-m'+i]);
+  s.materials.forEach((_,i)=>{ stMatDone[sid+'-m'+i]=!allDone; });
+  render(); schedSave();
+}
+
+function markAllTools(sid) {
+  const s=currentProduct.stations.find(s=>s.id===sid);
+  if (!s) return;
+  const allDone=s.tools.every((_,i)=>stToolDone[sid+'-t'+i]);
+  s.tools.forEach((_,i)=>{ stToolDone[sid+'-t'+i]=!allDone; });
+  render(); schedSave();
+}
+
+function toggleQcCheck(key) {
+  if (qcFailed[key]) { qcFailed[key]=false; qcChecked[key]=false; }
+  else if (qcChecked[key]) { qcChecked[key]=false; }
+  else { qcChecked[key]=true; }
+  render(); schedSave();
+}
+
+function flagQc(key,e) {
+  e.stopPropagation();
+  qcFailed[key]=!qcFailed[key];
+  if (qcFailed[key]) qcChecked[key]=false;
+  render(); schedSave();
+}
+
+function setVerdict(id,v) { verdicts[id]=verdicts[id]===v?'':v; render(); schedSave(); }
+
+// ─── RESET / MARK ALL ────────────────────────────────────────────────────────
+function resetAll() {
+  if (!currentProduct) return;
+  if (!confirm('Reset all stations and QC for this session?')) return;
+  currentProduct.stations.forEach(s=>{
+    stDone[s.id]=false; stOpen[s.id]=false; stTab[s.id]='steps';
+    s.steps.forEach((_,i)=>{ stStepDone[s.id+'-'+i]=false; });
+    s.materials.forEach((_,i)=>{ stMatDone[s.id+'-m'+i]=false; });
+    s.tools.forEach((_,i)=>{ stToolDone[s.id+'-t'+i]=false; });
+  });
+  QC_SECTIONS.forEach(sec=>{
+    sec.checks.forEach((_,i)=>{ qcChecked[sec.id+'-'+i]=false; qcFailed[sec.id+'-'+i]=false; });
+    qcSignoffs[sec.id]={name:'',date:'',time:''}; verdicts[sec.id]='';
+  });
+  verdicts['final']='';
+  render();
+  stInitials={};
+  document.querySelectorAll('.initials-input').forEach(el=>el.value='');
+  schedSave();
+  toast('Session reset');
+}
+
+function markAllDone() {
+  if (!currentProduct) return;
+  currentProduct.stations.forEach(s=>{
+    stDone[s.id]=true;
+    s.steps.forEach((_,i)=>{ stStepDone[s.id+'-'+i]=true; });
+    s.materials.forEach((_,i)=>{ stMatDone[s.id+'-m'+i]=true; });
+    s.tools.forEach((_,i)=>{ stToolDone[s.id+'-t'+i]=true; });
+  });
+  render(); schedSave();
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function render() {
+  if (!currentProduct) return;
+  const stations=currentProduct.stations;
+  const done=stations.filter(s=>stDone[s.id]).length;
+  const pct=Math.round(done/stations.length*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('ppct').textContent=pct+'%';
+  document.getElementById('stations-list').innerHTML=stations.map((s,i)=>renderStation(s,i)).join('');
+  document.getElementById('qc-area').innerHTML=QC_SECTIONS.map(renderQcSection).join('');
+  renderFinal();
+  updateBanner();
+  stations.forEach(s=>{
+    const el=document.getElementById('init-'+s.id);
+    if(el){
+      el.value = stInitials[s.id] || '';
+      el.addEventListener('click',e=>e.stopPropagation());
+      el.addEventListener('input', e=>{ stInitials[s.id]=e.target.value; schedSave(); });
+    }
+  });
+  QC_SECTIONS.forEach(sec=>{
+    ['name','date','time'].forEach(f=>{
+      const el=document.getElementById('qcs-'+sec.id+'-'+f);
+      if(el){ el.value=qcSignoffs[sec.id][f]||''; el.addEventListener('input',e=>{qcSignoffs[sec.id][f]=e.target.value; schedSave();}); el.addEventListener('click',e=>e.stopPropagation()); }
+    });
+  });
+  // bind final fields for auto-save
+  ['notes','name','date','time','wo','serial'].forEach(f=>{
+    const el=document.getElementById('final-'+f);
+    if(el) el.addEventListener('input',schedSave);
+  });
+}
+
+function renderStation(s,idx) {
+  const isDone=stDone[s.id], isOpen=stOpen[s.id], tab=stTab[s.id]||'steps';
+  const totalSteps=s.steps.length;
+  const doneSteps=s.steps.filter((_,i)=>stStepDone[s.id+'-'+i]).length;
+  const matDoneCount=s.materials.filter((_,i)=>stMatDone[s.id+'-m'+i]).length;
+  const toolDoneCount=s.tools.filter((_,i)=>stToolDone[s.id+'-t'+i]).length;
+  const badgeColor=isDone?'#1D9E75':'#378ADD';
+
+  const stepsHtml=s.steps.map((step,i)=>{
+    const sd=stStepDone[s.id+'-'+i];
+    return `<div class="step-row ${sd?'step-done':''}" onclick="toggleStep('${s.id}',${i})">
+      <div class="step-num">${sd?'&#10003;':i+1}</div>
+      <div><div class="step-text">${step.text}</div>${step.note?`<div class="step-note"><i class="ti ti-info-circle" style="font-size:11px"></i> ${step.note}</div>`:''}</div>
+    </div>`;
+  }).join('');
+
+  const matsHtml=s.materials.map((m,i)=>{
+    const md=stMatDone[s.id+'-m'+i];
+    return `<li class="mat-row" onclick="toggleMat('${s.id}',${i})" style="cursor:pointer;${md?'background:#f4fdf8;border:1px solid #a8dfc9;':'border:1px solid transparent;'}">
+      <div style="width:20px;height:20px;border-radius:4px;border:2px solid ${md?'#1D9E75':'#ccc'};background:${md?'#1D9E75':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">${md?'<span style="color:#fff;font-size:11px;font-weight:700;">&#10003;</span>':''}</div>
+      <div class="mat-info" style="${md?'opacity:0.6':''}"><div class="mat-name" style="${md?'text-decoration:line-through;color:#888':''}">${m.n}</div>${m.p?`<div class="mat-part">${m.p}</div>`:''}</div>
+      ${m.loc?`<span class="mat-loc">${m.loc}</span>`:''}
+    </li>`;
+  }).join('');
+
+  const toolsHtml=s.tools.length ? s.tools.map((t,i)=>{
+    const td=stToolDone[s.id+'-t'+i];
+    return `<div onclick="toggleTool('${s.id}',${i})" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:7px 10px;background:${td?'#f4fdf8':'#fafaf8'};border-radius:8px;border:1px solid ${td?'#a8dfc9':'#f0f0ee'};margin-bottom:6px;">
+      <div style="width:20px;height:20px;border-radius:4px;border:2px solid ${td?'#1D9E75':'#ccc'};background:${td?'#1D9E75':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${td?'<span style="color:#fff;font-size:11px;font-weight:700;">&#10003;</span>':''}</div>
+      <div style="width:26px;height:26px;border-radius:6px;background:${td?'#d0f0e4':'#FAEEDA'};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-tool" style="font-size:13px;color:${td?'#1D9E75':'#854F0B'};"></i></div>
+      <span style="${td?'text-decoration:line-through;color:#888':'color:#1a1a18'};font-size:13px;">${t}</span>
+    </div>`;
+  }).join('') : '<p style="font-size:13px;color:#aaa;padding:4px 0;">No specific tools listed</p>';
+
+  return `<div class="card" style="padding:0;overflow:hidden;border-color:${isDone?'#a8dfc9':'#e5e5e2'};">
+    <div style="display:flex;align-items:center;background:${isDone?'#f4fdf8':'#f8f8f6'};border-bottom:1px solid ${isDone?'#a8dfc9':'#e5e5e2'};">
+      <div style="width:6px;min-height:60px;background:${badgeColor};flex-shrink:0;"></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;flex:1;cursor:pointer;" onclick="toggleStation('${s.id}')">
+        <div style="width:32px;height:32px;border-radius:50%;background:${badgeColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:14px;font-weight:700;">${isDone?'&#10003;':idx+1}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:15px;font-weight:700;color:${isDone?'#1D9E75':'#1a1a18'};">${s.title} — ${s.subtitle}</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">${doneSteps}/${totalSteps} steps &nbsp;·&nbsp; ${matDoneCount}/${s.materials.length} materials &nbsp;·&nbsp; ${toolDoneCount}/${s.tools.length} tools${s.torque?` &nbsp;·&nbsp; <span style="color:#854F0B;font-weight:500">${s.torque}</span>`:''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;" onclick="event.stopPropagation()">
+          ${s.torque?`<span class="torque-pill">${s.torque}</span>`:''}
+          <div style="display:flex;align-items:center;gap:5px;">
+            <label for="init-${s.id}" style="font-size:11px;color:#888;">Initials</label>
+            <input class="initials-input" id="init-${s.id}" maxlength="4" placeholder="___" value="${stInitials[s.id]||''}">
+          </div>
+          <i class="ti ti-chevron-${isOpen?'up':'down'}" style="color:#aaa;font-size:16px;cursor:pointer;" onclick="toggleStation('${s.id}');event.stopPropagation()"></i>
+        </div>
+      </div>
+    </div>
+    <div class="station-body ${isOpen?'open':''}">
+      <div class="body-tabs">
+        <div class="body-tab ${tab==='steps'?'active':''}" onclick="switchTab('${s.id}','steps')"><i class="ti ti-list-check"></i> Steps (${doneSteps}/${totalSteps})</div>
+        <div class="body-tab ${tab==='materials'?'active':''}" onclick="switchTab('${s.id}','materials')"><i class="ti ti-package"></i> Materials (${matDoneCount}/${s.materials.length})</div>
+        <div class="body-tab ${tab==='tools'?'active':''}" onclick="switchTab('${s.id}','tools')"><i class="ti ti-tools"></i> Tools (${toolDoneCount}/${s.tools.length})</div>
+      </div>
+      <div class="tab-panel ${tab==='steps'?'active':''}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-size:12px;color:#888;">${doneSteps} of ${totalSteps} steps completed</span>
+          <button onclick="markStationDone('${s.id}')" style="font-size:11px;padding:3px 12px;border-radius:20px;border:1px solid ${isDone?'#5DCAA5':'#ddd'};background:${isDone?'#E1F5EE':'#fff'};color:${isDone?'#085041':'#666'};cursor:pointer;font-family:inherit;">${isDone?'&#10003; Complete':'Mark complete'}</button>
+        </div>
+        <div class="steps-list">${stepsHtml}</div>
+      </div>
+      <div class="tab-panel ${tab==='materials'?'active':''}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-size:12px;color:#888;">${matDoneCount} of ${s.materials.length} materials gathered</span>
+          <button onclick="markAllMats('${s.id}')" style="font-size:11px;padding:3px 12px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;font-family:inherit;">Gather all</button>
+        </div>
+        <ul class="mat-list">${matsHtml}</ul>
+      </div>
+      <div class="tab-panel ${tab==='tools'?'active':''}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-size:12px;color:#888;">${toolDoneCount} of ${s.tools.length} tools ready</span>
+          <button onclick="markAllTools('${s.id}')" style="font-size:11px;padding:3px 12px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;font-family:inherit;">All ready</button>
+        </div>
+        <div>${toolsHtml}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderQcSection(sec) {
+  const doneC=sec.checks.filter((_,i)=>qcChecked[sec.id+'-'+i]).length;
+  const failC=sec.checks.filter((_,i)=>qcFailed[sec.id+'-'+i]).length;
+  const v=verdicts[sec.id];
+  let badge='';
+  if(v==='pass') badge='<span class="qc-badge badge-pass"><i class="ti ti-check" style="font-size:11px"></i> Pass</span>';
+  else if(v==='fail') badge='<span class="qc-badge badge-fail"><i class="ti ti-x" style="font-size:11px"></i> Fail</span>';
+  else badge=`<span class="qc-badge badge-pending">${doneC}/${sec.checks.length} checked${failC?' &middot; '+failC+' flagged':''}</span>`;
+  const checksHtml=sec.checks.map((c,i)=>{
+    const key=sec.id+'-'+i, isC=qcChecked[key], isF=qcFailed[key];
+    return `<div class="qc-row ${isC?'qc-checked':''} ${isF?'qc-failed':''}" onclick="toggleQcCheck('${key}')">
+      <div class="qc-box"></div><span class="qc-lbl">${c}</span>
+      <button class="flag-btn" onclick="flagQc('${key}',event)">${isF?'Unflag':'Flag fail'}</button>
+    </div>`;
+  }).join('');
+  return `<div class="qc-block">
+    <div class="qc-head"><i class="ti ti-shield-check" style="font-size:15px;color:#888;"></i><span class="qc-head-title">${sec.title}</span>${badge}</div>
+    <div class="qc-body">
+      <div class="qc-checks">${checksHtml}</div>
+      <div class="qc-signoff">
+        <div class="field"><label>QC inspector name</label><input type="text" id="qcs-${sec.id}-name" placeholder="Inspector name"></div>
+        <div class="field"><label>Sign-off date</label><input type="date" id="qcs-${sec.id}-date"></div>
+        <div class="field"><label>Time</label><input type="time" id="qcs-${sec.id}-time"></div>
+      </div>
+      <div class="verdict-row">
+        <span class="verdict-lbl">Section verdict:</span>
+        <button class="vbtn ${v==='pass'?'vpass':''}" onclick="setVerdict('${sec.id}','pass')"><i class="ti ti-check" style="font-size:13px"></i> Pass</button>
+        <button class="vbtn ${v==='fail'?'vfail':''}" onclick="setVerdict('${sec.id}','fail')"><i class="ti ti-x" style="font-size:13px"></i> Fail</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderFinal() {
+  const v=verdicts['final']||'';
+  document.getElementById('final-area').innerHTML=`
+    <div class="qc-block">
+      <div class="qc-head"><i class="ti ti-writing-sign" style="font-size:15px;color:#888;"></i><span class="qc-head-title">Final QC authorization</span></div>
+      <div class="qc-body">
+        <div class="form-grid three" style="margin-bottom:10px;">
+          <div class="field"><label>QC supervisor name</label><input type="text" id="final-name" placeholder="Supervisor name"></div>
+          <div class="field"><label>Authorization date</label><input type="date" id="final-date"></div>
+          <div class="field"><label>Time</label><input type="time" id="final-time"></div>
+        </div>
+        <div class="field" style="margin-bottom:10px;">
+          <label>Corrective actions / notes</label>
+          <textarea id="final-notes" placeholder="Describe any failures, rework performed, or deviations from standard procedure..."></textarea>
+        </div>
+        <div class="form-grid" style="margin-bottom:10px;">
+          <div class="field"><label>Work order / batch number</label><input type="text" id="final-wo" placeholder="WO-XXXXXX"></div>
+          <div class="field"><label>Unit serial / lot number</label><input type="text" id="final-serial" placeholder="SN or LOT"></div>
+        </div>
+        <div class="verdict-row">
+          <span class="verdict-lbl">Final disposition:</span>
+          <button class="vbtn ${v==='release'?'vpass':''}" onclick="setVerdict('final','release')"><i class="ti ti-check" style="font-size:13px"></i> Release to ship</button>
+          <button class="vbtn ${v==='hold'?'vhold':''}" onclick="setVerdict('final','hold')"><i class="ti ti-alert-triangle" style="font-size:13px"></i> Hold — rework</button>
+          <button class="vbtn ${v==='reject'?'vfail':''}" onclick="setVerdict('final','reject')"><i class="ti ti-x" style="font-size:13px"></i> Reject / scrap</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function updateBanner() {
+  const stations=currentProduct?currentProduct.stations:[];
+  const banner=document.getElementById('complete-banner');
+  if(stations.every(s=>stDone[s.id])&&QC_SECTIONS.every(sec=>verdicts[sec.id]==='pass')&&verdicts['final']==='release') banner.classList.add('show'); else banner.classList.remove('show');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.getElementById('no-product').style.display='block';
+const today=new Date().toISOString().split('T')[0];
+const now=new Date().toTimeString().slice(0,5);
+document.getElementById('f-date').value=today;
+document.getElementById('f-time').value=now;
+document.getElementById('f-asmdate').value=today;
+renderSessionsList();
+</script>
+</body>
+</html>
